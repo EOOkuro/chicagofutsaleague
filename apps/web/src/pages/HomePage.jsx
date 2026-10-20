@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LeagueCard from '../components/LeagueCard.jsx';
+import ProRelPyramid from '../components/ProRelPyramid.jsx';
 import { NETWORK, TIERS, LEAGUES, leaguesByTier } from '../data/leagues.js';
 
 const WHY = [
@@ -97,6 +98,16 @@ function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* PRO / REL PYRAMID */}
+          <div className="mt-16">
+            <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">PROMOTION AND RELEGATION</span>
+            <h2 className="text-[hsl(var(--black))] mb-3">THE PYRAMID</h2>
+            <p className="text-[hsl(var(--gray))] max-w-xl mb-10">
+              Win your league and move up a level. Finish at the bottom and drop down. Tap any league to see its page.
+            </p>
+            <ProRelPyramid />
           </div>
         </div>
       </section>
