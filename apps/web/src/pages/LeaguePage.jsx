@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { ArrowLeft, MapPin, Building2, Calendar, Trophy } from 'lucide-react';
+import { ArrowLeft, MapPin, Building2, Calendar, Trophy, Users } from 'lucide-react';
 import LeagueCard from '../components/LeagueCard.jsx';
-import { NETWORK, TIERS, LEAGUES, leagueBySlug } from '../data/leagues.js';
+import { NETWORK, TIERS, LEAGUES, SEASON, gamesFor, leagueBySlug, describeMoves } from '../data/leagues.js';
 
 function LeaguePage() {
   const { slug } = useParams();
@@ -52,6 +52,19 @@ function LeaguePage() {
             <h4 className="text-2xl text-[hsl(var(--black))] m-0">WHERE WE PLAY</h4>
             <p className="text-[hsl(var(--gray))] m-0 mt-1">{league.venue}</p>
           </div>
+        </div>
+
+        <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6 mb-6">
+          <Users className="w-6 h-6 text-[hsl(var(--primary))] mb-3" />
+          <h4 className="text-2xl text-[hsl(var(--black))] m-0">HOW THE SEASON WORKS</h4>
+          <p className="text-[hsl(var(--gray))] m-0 mt-1">
+            {league.teams} teams play each other home and away: {gamesFor(league.teams)} games over {SEASON.months} months.
+          </p>
+          <ul className="list-none p-0 m-0 mt-3 space-y-1">
+            {describeMoves(league.slug).map((line) => (
+              <li key={line} className="text-[hsl(var(--black))] font-semibold">{line}</li>
+            ))}
+          </ul>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
