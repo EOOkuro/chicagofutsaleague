@@ -14,11 +14,11 @@ function AboutPage() {
         <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">ABOUT</span>
         <h1 className="text-[hsl(var(--black))] mb-6">ONE CITY, {LEAGUES.length} LEAGUES</h1>
         <p className="text-[hsl(var(--gray))] text-xl mb-12">
-          {NETWORK.name} is a network of futsal leagues with host venues across Chicago. Each league covers
-          its own part of the city, and together they give every player a league close to home.
+          {NETWORK.name} is a network of futsal leagues with host venues across Chicago, joined by promotion
+          and relegation. Finish near the top and you move up a level. Finish near the bottom and you drop down.
         </p>
 
-        <h2 className="text-[hsl(var(--black))] mb-6">HOW IT IS ORGANIZED</h2>
+        <h2 className="text-[hsl(var(--black))] mb-6">THE LEVELS</h2>
         <div className="space-y-4 mb-14">
           {TIERS.map((t) => (
             <div key={t.tier} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
