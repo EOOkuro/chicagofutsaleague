@@ -8,7 +8,7 @@ import HomePage from './pages/HomePage.jsx';
 import LeaguesPage from './pages/LeaguesPage.jsx';
 import LeaguePage from './pages/LeaguePage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
-impprt Youth from './pages/Youth.jsx
+import Youth from './pages/Youth.jsx';
 import SponsorsPage from './pages/SponsorsPage.jsx';
 import ContactPage from './pages/ContactPage.jsx';
 import { NETWORK, LEAGUES } from './data/leagues.js';
