@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Building2, ArrowRight } from 'lucide-react';
+import { MapPin, Building2, Users, ArrowRight } from 'lucide-react';
+import { gamesFor } from '../data/leagues.js';
 
 function LeagueCard({ league }) {
   return (
@@ -18,6 +19,9 @@ function LeagueCard({ league }) {
         </p>
         <p className="flex items-center gap-2 m-0">
           <Building2 className="w-4 h-4 shrink-0 text-[hsl(var(--primary))]" /> {league.venue}
+        </p>
+        <p className="flex items-center gap-2 m-0">
+          <Users className="w-4 h-4 shrink-0 text-[hsl(var(--primary))]" /> {league.teams} teams · {gamesFor(league.teams)} games
         </p>
       </div>
       <span className="label-text font-bold text-sm text-[hsl(var(--black))] inline-flex items-center gap-2 group-hover:text-[hsl(var(--primary))] transition-colors">
