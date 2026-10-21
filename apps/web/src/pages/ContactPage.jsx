@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { NETWORK, LEAGUES } from '../data/leagues.js';
 
-const TYPES = ['Player', 'Team', 'Sponsor', 'Venue partner', 'Other'];
+const TYPES = ['Question', 'Sponsor', 'Venue partner', 'Press', 'Other'];
 const selectClass =
   'w-full h-10 rounded-md border border-input bg-[hsl(var(--true-white))] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]';
 
@@ -17,7 +17,7 @@ function ContactPage() {
   const [params] = useSearchParams();
   const [sending, setSending] = useState(false);
   const defaultLeague = LEAGUES.find((l) => l.slug === params.get('league'))?.name || '';
-  const defaultType = TYPES.includes(params.get('type')) ? params.get('type') : 'Player';
+  const defaultType = TYPES.includes(params.get('type')) ? params.get('type') : 'Question';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,14 +50,14 @@ function ContactPage() {
   return (
     <div className="pt-32 pb-24 bg-[hsl(var(--background))] min-h-screen">
       <Helmet>
-        <title>Join or Contact | {NETWORK.name}</title>
-        <meta name="description" content="Join a futsal league, register a team, or become a sponsor." />
+        <title>Contact | {NETWORK.name}</title>
+        <meta name="description" content="Contact the Chicago Futsal League with questions, sponsorships and venue partnerships." />
       </Helmet>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">JOIN</span>
+        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">CONTACT</span>
         <h1 className="text-[hsl(var(--black))] mb-4">GET IN TOUCH</h1>
         <p className="text-[hsl(var(--gray))] text-lg mb-10">
-          Players, teams, sponsors and venues: tell us what you are looking for.
+          Questions, sponsorships and venue partnerships: tell us what you need. Ready to play? <Link to="/register" className="text-[hsl(var(--primary))] font-bold">Register here</Link>.
         </p>
 
         <form onSubmit={handleSubmit} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6 md:p-8 space-y-5">

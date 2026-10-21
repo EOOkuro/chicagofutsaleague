@@ -37,7 +37,8 @@ function Footer() {
             <ul className="space-y-2 p-0 list-none">
               <li><Link to="/about" className="text-[hsl(var(--gray))] hover:text-white transition-colors">About</Link></li>
               <li><Link to="/sponsors" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Sponsors</Link></li>
-              <li><Link to="/contact" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Join or contact us</Link></li>
+              <li><Link to="/register" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Register</Link></li>
+              <li><Link to="/contact" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
         </div>

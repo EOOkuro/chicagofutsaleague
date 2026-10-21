@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { NETWORK, LEAGUES } from '../data/leagues.js';
+import SponsorStrip from '../components/SponsorStrip.jsx';
 
 const FORMATS = [
   { title: 'Network sponsor', text: `Your brand across all ${LEAGUES.length} leagues, on the site and at every host venue.` },
@@ -39,6 +40,7 @@ function SponsorsPage() {
           Become a sponsor
         </Link>
       </div>
+      <SponsorStrip className="mt-20" />
     </div>
   );
 }

@@ -7,7 +7,8 @@ const NAV = [
   { name: 'Leagues', path: '/leagues' },
   { name: 'About', path: '/about' },
   { name: 'Sponsors', path: '/sponsors' },
-  { name: 'Join', path: '/contact', highlight: true },
+  { name: 'Contact', path: '/contact' },
+  { name: 'Register', path: '/register', highlight: true },
 ];
 
 function Header() {

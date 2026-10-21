@@ -11,6 +11,7 @@ import AboutPage from './pages/AboutPage.jsx';
 import Youth from './pages/Youth.jsx';
 import SponsorsPage from './pages/SponsorsPage.jsx';
 import ContactPage from './pages/ContactPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
 import { NETWORK, LEAGUES } from './data/leagues.js';
 
 function ScrollToTop() {
@@ -45,6 +46,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/youth" element={<Youth />} />
             <Route path="/sponsors" element={<SponsorsPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route
               path="*"

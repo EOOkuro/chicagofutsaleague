@@ -5,6 +5,8 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LeagueCard from '../components/LeagueCard.jsx';
 import ProRelPyramid from '../components/ProRelPyramid.jsx';
+import SponsorStrip from '../components/SponsorStrip.jsx';
+import AgeGroups from '../components/AgeGroups.jsx';
 import { NETWORK, TIERS, LEAGUES, leaguesByTier } from '../data/leagues.js';
 
 const WHY = [
@@ -55,14 +57,26 @@ function HomePage() {
                 Find your league <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
-                to="/contact"
+                to="/register"
                 className="inline-flex items-center gap-2 border-2 border-white/40 text-white px-6 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-white/10 transition-colors"
               >
-                Join a team
+                Register
               </Link>
             </div>
           </motion.div>
         </div>
+      </section>
+
+      {/* PHOTO */}
+      <section className="bg-[hsl(var(--black))] pb-0">
+        <img
+          src="/images/game-night.jpg"
+          alt="Players and a referee on an indoor futsal court, a player in an orange jersey standing over the ball"
+          className="w-full max-h-[70vh] object-cover"
+          width="828"
+          height="475"
+          loading="lazy"
+        />
       </section>
 
       {/* LEAGUES */}
@@ -112,6 +126,13 @@ function HomePage() {
         </div>
       </section>
 
+      {/* AGE GROUPS */}
+      <section className="py-20 md:py-28 bg-[hsl(var(--true-white))] border-y border-[hsl(var(--white))]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AgeGroups />
+        </div>
+      </section>
+
       {/* WHY FUTSAL */}
       <section className="py-20 md:py-28 bg-[hsl(var(--background))]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,18 +148,20 @@ function HomePage() {
         </div>
       </section>
 
+      <SponsorStrip />
+
       {/* CTA */}
       <section className="py-20 bg-[hsl(var(--black))] text-center">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-white mb-4">READY TO PLAY?</h2>
           <p className="text-[hsl(var(--white))] text-lg mb-8">
-            Tell us your area and we will point you to the right league.
+            Register your team, or sign up as a free agent and we will find you one.
           </p>
           <Link
-            to="/contact"
+            to="/register"
             className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary-dark))] transition-colors"
           >
-            Get started <ArrowRight className="w-5 h-5" />
+            Register <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>

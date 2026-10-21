@@ -82,12 +82,12 @@ function LeaguePage() {
 
         <div className="bg-[hsl(var(--black))] rounded-2xl p-8 text-center mb-14">
           <h3 className="text-white m-0 mb-2">PLAY IN THIS LEAGUE</h3>
-          <p className="text-[hsl(var(--white))] mb-6">Tell us you are interested and we will be in touch.</p>
+          <p className="text-[hsl(var(--white))] mb-6">Register a team or sign up as a free agent.</p>
           <Link
-            to={`/contact?league=${league.slug}`}
+            to={`/register?league=${league.slug}`}
             className="inline-block bg-[hsl(var(--primary))] text-white px-8 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary-dark))] transition-colors"
           >
-            Register interest
+            Register
           </Link>
         </div>
 
