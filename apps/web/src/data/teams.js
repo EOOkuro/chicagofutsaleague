@@ -53,9 +53,9 @@ export const TEAMS = [
   // Harrison Park Rec League
   { id: 'cf-pilsen', name: 'CF Pilsen', league: 'harrison-park-rec', groups: ['U11'] },
 
-  // Not placed in a league yet
-  { id: 'hyde-park-rangers', name: 'Hyde Park Rangers', league: null, groups: AGE_OPTIONS, filled: AGE_OPTIONS },
-  { id: 'international-futebol-club', name: 'International Futebol Club', league: null, groups: ['U12'], filled: [] },
+  // Chicago Futsal League (UIC)
+  { id: 'hyde-park-rangers', name: 'Hyde Park Rangers', league: 'chicago-futsal-league', groups: AGE_OPTIONS, filled: AGE_OPTIONS },
+  { id: 'international-futebol-club', name: 'International Futebol Club', league: 'chicago-futsal-league', groups: ['U12'], filled: [] },
 ];
 
 export const placeOf = (team) =>
