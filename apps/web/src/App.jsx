@@ -7,6 +7,7 @@ import Footer from './components/Footer.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LeaguesPage from './pages/LeaguesPage.jsx';
 import LeaguePage from './pages/LeaguePage.jsx';
+import TeamsPage from './pages/TeamsPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
 import Youth from './pages/Youth.jsx';
 import SponsorsPage from './pages/SponsorsPage.jsx';
@@ -43,6 +44,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/leagues" element={<LeaguesPage />} />
             <Route path="/leagues/:slug" element={<LeaguePage />} />
+            <Route path="/teams" element={<TeamsPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/youth" element={<Youth />} />
             <Route path="/sponsors" element={<SponsorsPage />} />
