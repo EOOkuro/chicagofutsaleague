@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ArrowLeft, MapPin, Building2, Calendar, Trophy, Users } from 'lucide-react';
 import LeagueCard from '../components/LeagueCard.jsx';
+import { teamsIn } from '../data/teams.js';
 import { NETWORK, TIERS, LEAGUES, SEASON, gamesFor, leagueBySlug, describeMoves } from '../data/leagues.js';
 
 function LeaguePage() {
@@ -21,6 +22,7 @@ function LeaguePage() {
   }
 
   const tier = TIERS.find((t) => t.tier === league.tier);
+  const leagueTeams = teamsIn(league.slug);
   const others = LEAGUES.filter((l) => l.slug !== league.slug && l.tier === league.tier);
 
   return (
@@ -65,6 +67,25 @@ function LeaguePage() {
               <li key={line} className="text-[hsl(var(--black))] font-semibold">{line}</li>
             ))}
           </ul>
+        </div>
+
+        <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6 mb-6">
+          <Users className="w-6 h-6 text-[hsl(var(--primary))] mb-3" />
+          <h4 className="text-2xl text-[hsl(var(--black))] m-0">TEAMS</h4>
+          {leagueTeams.length > 0 ? (
+            <ul className="list-none p-0 m-0 mt-2 flex flex-wrap gap-2">
+              {leagueTeams.map((t) => (
+                <li key={t.id} className="px-3 py-1 rounded-md bg-[hsl(var(--light-bg))] text-[hsl(var(--black))] font-semibold text-sm">
+                  {t.name}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[hsl(var(--gray))] m-0 mt-1">No teams yet. Be the first to register.</p>
+          )}
+          <Link to="/teams" className="inline-block mt-4 text-sm font-bold uppercase tracking-wider text-[hsl(var(--primary))]">
+            See all teams →
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
