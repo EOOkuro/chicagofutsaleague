@@ -6,6 +6,8 @@ import { NETWORK } from '../data/leagues.js';
 const NAV = [
   { name: 'Leagues', path: '/leagues' },
   { name: 'Teams', path: '/teams' },
+  { name: 'Pricing', path: '/pricing' },
+  { name: 'Rules', path: '/rules' },
   { name: 'About', path: '/about' },
   { name: 'Sponsors', path: '/sponsors' },
   { name: 'Contact', path: '/contact' },
