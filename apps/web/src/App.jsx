@@ -11,6 +11,8 @@ import TeamsPage from './pages/TeamsPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
 import Youth from './pages/Youth.jsx';
 import SponsorsPage from './pages/SponsorsPage.jsx';
+import PricingPage from './pages/PricingPage.jsx';
+import RulesPage from './pages/RulesPage.jsx';
 import ContactPage from './pages/ContactPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import { NETWORK, LEAGUES } from './data/leagues.js';
