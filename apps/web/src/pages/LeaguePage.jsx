@@ -1,8 +1,9 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { ArrowLeft, MapPin, Building2, Calendar, Trophy, Users } from 'lucide-react';
+import { ArrowLeft, MapPin, Building2, Users } from 'lucide-react';
 import LeagueCard from '../components/LeagueCard.jsx';
+import LiveLeague from '../components/LiveLeague.jsx';
 import { teamsIn } from '../data/teams.js';
 import { NETWORK, TIERS, LEAGUES, SEASON, gamesFor, leagueBySlug, describeMoves } from '../data/leagues.js';
 
@@ -88,18 +89,7 @@ function LeaguePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
-            <Calendar className="w-6 h-6 text-[hsl(var(--primary))] mb-3" />
-            <h4 className="text-2xl text-[hsl(var(--black))] m-0">SCHEDULE</h4>
-            <p className="text-[hsl(var(--gray))] m-0 mt-1">Fixtures will be posted here once the season is set.</p>
-          </div>
-          <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
-            <Trophy className="w-6 h-6 text-[hsl(var(--primary))] mb-3" />
-            <h4 className="text-2xl text-[hsl(var(--black))] m-0">STANDINGS</h4>
-            <p className="text-[hsl(var(--gray))] m-0 mt-1">The table appears after the first match day.</p>
-          </div>
-        </div>
+        <LiveLeague slug={league.slug} />
 
         <div className="bg-[hsl(var(--black))] rounded-2xl p-8 text-center mb-14">
           <h3 className="text-white m-0 mb-2">PLAY IN THIS LEAGUE</h3>

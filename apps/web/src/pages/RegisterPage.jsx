@@ -1,3 +1,4 @@
+import { registerUrl } from '../lib/fedos-public.js';
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -407,6 +408,19 @@ function RegisterPage() {
         <p className="text-[hsl(var(--gray))] text-xl max-w-2xl mb-14">
           Bring your team to the court, or sign up on your own and we will find you a team. Schools, clubs, nonprofits and friends all welcome.
         </p>
+
+        <div className="rounded-2xl border border-[hsl(var(--primary))] bg-[hsl(var(--true-white))] p-6 mb-10 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-1">
+            <h3 className="text-2xl text-[hsl(var(--black))] m-0">REGISTER AND PAY ON FEDOS</h3>
+            <p className="text-[hsl(var(--gray))] m-0 mt-1">Players and parents: one account to register, pay, and see your team's schedule.</p>
+          </div>
+          <a
+            href={registerUrl(params.get('league') || 'chicago-futsal-league')}
+            className="inline-block text-center bg-[hsl(var(--primary))] text-white px-6 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary-dark))] transition-colors"
+          >
+            Register on FedOS
+          </a>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {MODES.map((m, i) => (

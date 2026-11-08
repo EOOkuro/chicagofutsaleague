@@ -1,3 +1,4 @@
+import { loginUrl } from '../lib/fedos-public.js';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { NETWORK, LEAGUES } from '../data/leagues.js';
@@ -40,6 +41,7 @@ function Footer() {
               <li><Link to="/rules" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Format and rules</Link></li>
               <li><Link to="/sponsors" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Sponsors</Link></li>
               <li><Link to="/register" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Register</Link></li>
+              <li><a href={loginUrl('chicago-futsal-league')} className="text-[hsl(var(--gray))] hover:text-white transition-colors">Player sign in</a></li>
               <li><Link to="/contact" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
