@@ -61,20 +61,16 @@ function HomePage() {
                 to="/register"
                 className="inline-flex items-center gap-2 border-2 border-white/40 text-white px-6 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-white/10 transition-colors"
               >
-                Register
+                New here? Register
               </Link>
-              <a
-                href={loginUrl('chicago-futsal-league', 'guardian')}
-                className="inline-flex items-center gap-2 text-white/80 px-4 py-3 font-bold uppercase tracking-wider hover:text-white transition-colors"
-              >
-                Guardian Login
-              </a>
-              <a
-                href={loginUrl('chicago-futsal-league', 'player')}
-                className="inline-flex items-center gap-2 text-white/80 px-4 py-3 font-bold uppercase tracking-wider hover:text-white transition-colors"
-              >
-                Player Login
-              </a>
+            </div>
+            <div className="mt-8 max-w-lg rounded-xl border border-white/25 bg-black/30 p-5">
+              <p className="text-white font-bold m-0">Already registered? Log in to FedOS</p>
+              <p className="text-white/80 text-sm mt-1 mb-4">FedOS is our registration and payment system. Log in to pay, update your registration, and see your team and schedule.</p>
+              <div className="flex flex-wrap gap-3">
+                <a href={loginUrl('chicago-futsal-league', 'guardian')} className="inline-flex items-center border-2 border-white/40 text-white px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-white/10 transition-colors">Guardian / Parent Log In</a>
+                <a href={loginUrl('chicago-futsal-league', 'player')} className="inline-flex items-center border-2 border-white/40 text-white px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-sm hover:bg-white/10 transition-colors">Player Log In</a>
+              </div>
             </div>
           </motion.div>
         </div>

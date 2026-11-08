@@ -12,8 +12,8 @@ const NAV = [
   { name: 'About', path: '/about' },
   { name: 'Sponsors', path: '/sponsors' },
   { name: 'Contact', path: '/contact' },
-  { name: 'Player Login', role: 'player' },
-  { name: 'Guardian Login', role: 'guardian' },
+  { name: 'Player Log In', role: 'player' },
+  { name: 'Guardian Log In', role: 'guardian' },
   { name: 'Register', path: '/register', highlight: true },
 ];
 
