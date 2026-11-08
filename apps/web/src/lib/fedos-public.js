@@ -69,7 +69,13 @@ export const searchFedos = (q) => (q || "").trim().length < 2 ? Promise.resolve(
 
 // ── Where people go to register, pay and sign in: always FedOS.
 export const registerUrl = (slug) => `${app()}/register/${encodeURIComponent(slug)}`;
-export const loginUrl = (siteName) => `${app()}/login${siteName ? `?site=${encodeURIComponent(siteName)}` : ""}`;
+export const loginUrl = (siteName, role) => {
+  const q = new URLSearchParams();
+  if (siteName) q.set("site", siteName);
+  if (role) q.set("role", role); // "player" | "guardian"
+  const s = q.toString();
+  return `${app()}/login${s ? `?${s}` : ""}`;
+};
 export const inviteUrl = (token) => `${app()}/invite/${encodeURIComponent(token)}`;
 
 // ── Formatting helpers (Chicago time, which is where every league plays)

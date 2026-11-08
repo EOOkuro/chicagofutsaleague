@@ -7,6 +7,7 @@ import LeagueCard from '../components/LeagueCard.jsx';
 import ProRelPyramid from '../components/ProRelPyramid.jsx';
 import SponsorStrip from '../components/SponsorStrip.jsx';
 import AgeGroups from '../components/AgeGroups.jsx';
+import { loginUrl } from '../lib/fedos-public.js';
 import { NETWORK, TIERS, LEAGUES, leaguesByTier } from '../data/leagues.js';
 
 const WHY = [
@@ -62,6 +63,18 @@ function HomePage() {
               >
                 Register
               </Link>
+              <a
+                href={loginUrl('chicago-futsal-league', 'guardian')}
+                className="inline-flex items-center gap-2 text-white/80 px-4 py-3 font-bold uppercase tracking-wider hover:text-white transition-colors"
+              >
+                Guardian Login
+              </a>
+              <a
+                href={loginUrl('chicago-futsal-league', 'player')}
+                className="inline-flex items-center gap-2 text-white/80 px-4 py-3 font-bold uppercase tracking-wider hover:text-white transition-colors"
+              >
+                Player Login
+              </a>
             </div>
           </motion.div>
         </div>

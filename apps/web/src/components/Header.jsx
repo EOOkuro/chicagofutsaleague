@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { NETWORK } from '../data/leagues.js';
+import { loginUrl } from '../lib/fedos-public.js';
 
 const NAV = [
   { name: 'Leagues', path: '/leagues' },
@@ -11,6 +12,8 @@ const NAV = [
   { name: 'About', path: '/about' },
   { name: 'Sponsors', path: '/sponsors' },
   { name: 'Contact', path: '/contact' },
+  { name: 'Player', role: 'player' },
+  { name: 'Guardian', role: 'guardian' },
   { name: 'Register', path: '/register', highlight: true },
 ];
 
@@ -49,7 +52,11 @@ function Header() {
 
           <nav className="hidden md:flex items-center gap-6">
             {NAV.map((l) =>
-              l.highlight ? (
+              l.role ? (
+                <a key={l.name} href={loginUrl('chicago-futsal-league', l.role)} className="nav-text text-sm text-[hsl(var(--white))] hover:text-[hsl(var(--primary-light))] transition-colors">
+                  {l.name}
+                </a>
+              ) : l.highlight ? (
                 <Link
                   key={l.name}
                   to={l.path}
@@ -86,7 +93,11 @@ function Header() {
       {open && (
         <div className="absolute top-full left-0 right-0 bg-[hsl(var(--black))] border-t border-[hsl(var(--gray))]/20 shadow-xl md:hidden">
           <div className="flex flex-col px-4 py-6 gap-4">
-            {NAV.map((l) => (
+            {NAV.map((l) => l.role ? (
+              <a key={l.name} href={loginUrl('chicago-futsal-league', l.role)} className="nav-text text-lg py-2 border-b border-[hsl(var(--gray))]/20 text-[hsl(var(--white))]">
+                {l.name}
+              </a>
+            ) : (
               <Link
                 key={l.name}
                 to={l.path}
