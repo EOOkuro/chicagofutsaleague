@@ -1,4 +1,5 @@
-import { registerUrl } from '../lib/fedos-public.js';
+import { loginUrl } from '../lib/fedos-public.js';
+import { submitRegistration } from '../lib/fedos-register.js';
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -39,7 +40,7 @@ const MODES = [
 const STEPS = [
   { num: '1', title: 'Choose team or free agent', desc: 'Teams sign up once. Players without a team sign up as free agents.' },
   { num: '2', title: 'Fill out the form', desc: 'Age group, division, contact info and the basics about your team or player.' },
-  { num: '3', title: 'We confirm', desc: 'We email you your division, league, venue and next steps.' },
+  { num: '3', title: 'Approve and pay', desc: 'Your registration lands in FedOS. Create a free FedOS account with the same email to approve it and pay.' },
   { num: '4', title: 'Play', desc: 'Match days run at the host venues. Standings and stats are posted by age group.' },
 ];
 
@@ -125,12 +126,17 @@ function DivisionFields({ group, setGroup, gender, setGender }) {
   );
 }
 
+const MAX_ROSTER = 10;
+const emptyPlayer = () => ({ name: '', dob: '' });
+const DEFAULT_LEAGUE_SLUG = 'chicago-futsal-league';
+
 function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
   const [sending, setSending] = useState(false);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(null); // { email, players } after a successful send
   const [error, setError] = useState('');
   const [group, setGroup] = useState('');
   const [gender, setGender] = useState('');
+  const [roster, setRoster] = useState([emptyPlayer()]);
 
   const isTeam = mode === 'team';
   const youth = isYouth(group);
@@ -138,6 +144,73 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
   const reset = () => {
     setGroup('');
     setGender('');
+    setRoster([emptyPlayer()]);
+  };
+
+  const updatePlayer = (i, field, value) =>
+    setRoster((r) => r.map((p, idx) => (idx === i ? { ...p, [field]: value } : p)));
+
+  // Turns the form into what FedOS expects: a guardian and 1-10 players. Everything else rides along and is saved.
+  const buildFormData = (v) => {
+    const common = {
+      site: NETWORK.name,
+      registration_type: isTeam ? 'Team' : 'Free agent',
+      website: v.website || '', // spam trap, stays empty for real people
+    };
+    if (isTeam) {
+      return {
+        ...common,
+        guardian: {
+          name: v.contact_name,
+          email: v.email,
+          phone: v.contact_phone,
+          relationship: 'coach / team contact',
+        },
+        players: roster.map((p) => ({
+          name: p.name.trim(),
+          dob: p.dob,
+          team: v.team_name,
+          age_group: v.age_group,
+          division: v.division,
+        })),
+        plan: `Team: ${v.team_name} (${v.age_group} ${v.division})`.slice(0, 200),
+        team: {
+          name: v.team_name,
+          type: v.team_type,
+          organization: v.organization || '',
+          age_group: v.age_group,
+          division: v.division,
+          league: v.league_name || '',
+          roster_size_estimate: v.roster_size || '',
+          notes: v.notes || '',
+        },
+      };
+    }
+    return {
+      ...common,
+      guardian: {
+        // Adults sign themselves up; for youth the parent or guardian is the contact.
+        name: youth ? v.guardian_name : v.player_name,
+        email: v.email,
+        phone: v.contact_phone,
+        emergency_name: v.emergency_contact_name,
+        emergency_phone: v.emergency_contact_phone,
+        relationship: youth ? 'parent/guardian' : 'self',
+      },
+      players: [
+        {
+          name: v.player_name,
+          dob: v.date_of_birth,
+          team: '',
+          age_group: v.age_group,
+          division: v.division,
+          position: v.position,
+          league: v.league_name || '',
+          notes: v.notes || '',
+        },
+      ],
+      plan: `Free agent: ${v.age_group} ${v.division}`.slice(0, 200),
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -146,24 +219,17 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
     setSending(true);
     setError('');
     const f = new FormData(e.target);
-    const payload = Object.fromEntries(f.entries());
-    payload._subject = isTeam
-      ? `Team registration: ${payload.team_name} (${payload.age_group} ${payload.division})`
-      : `Free agent: ${payload.player_name} (${payload.age_group} ${payload.division})`;
-    payload.registration_type = isTeam ? 'Team' : 'Free agent';
-    payload.site = NETWORK.name;
+    const v = Object.fromEntries(f.entries());
+    // The league dropdown holds a slug; keep the readable name too.
+    v.league_name = LEAGUES.find((l) => l.slug === v.league)?.name || '';
+    const slug = v.league || DEFAULT_LEAGUE_SLUG;
     try {
-      const res = await fetch(NETWORK.formEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error('failed');
-      setDone(true);
-      toast.success('Registration received!', { description: 'We will email you next steps.' });
+      const res = await submitRegistration(slug, buildFormData(v));
+      setDone({ email: v.email, players: res?.players ?? 0 });
+      toast.success('Registration received!', { description: 'It is saved in FedOS.' });
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } catch {
-      setError('We could not send your registration. Check your connection and try again.');
+    } catch (err) {
+      setError(err.message);
     } finally {
       setSending(false);
     }
@@ -173,19 +239,31 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
     return (
       <div ref={formRef} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-8 md:p-12 text-center">
         <h3 className="text-4xl text-[hsl(var(--black))] mb-3">YOU'RE REGISTERED</h3>
-        <p className="text-[hsl(var(--gray))] max-w-md mx-auto mb-6">
-          We got your {isTeam ? 'team' : 'free agent'} registration. Check your email for your division and next steps.
+        <p className="text-[hsl(var(--gray))] max-w-md mx-auto mb-3">
+          We got your {isTeam ? 'team' : 'free agent'} registration.
         </p>
-        <Button
-          type="button"
-          onClick={() => {
-            setDone(false);
-            reset();
-          }}
-          className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary-dark))] text-white font-bold uppercase tracking-wider"
-        >
-          Register another {isTeam ? 'team' : 'player'}
-        </Button>
+        <p className="text-[hsl(var(--gray))] max-w-md mx-auto mb-6">
+          <strong className="text-[hsl(var(--black))]">Next step:</strong> create a free FedOS account with{' '}
+          <strong className="text-[hsl(var(--black))]">{done.email}</strong> to approve the registration and pay.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <a
+            href={loginUrl(NETWORK.name, isTeam ? undefined : youth ? 'guardian' : 'player')}
+            className="inline-block bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary-dark))] text-white px-6 py-2.5 rounded-md text-sm font-bold uppercase tracking-wider transition-colors"
+          >
+            Continue in FedOS
+          </a>
+          <Button
+            type="button"
+            onClick={() => {
+              setDone(null);
+              reset();
+            }}
+            className="bg-transparent border border-[hsl(var(--black))] text-[hsl(var(--black))] hover:bg-[hsl(var(--black))] hover:text-white font-bold uppercase tracking-wider"
+          >
+            Register another {isTeam ? 'team' : 'player'}
+          </Button>
+        </div>
       </div>
     );
   }
@@ -217,7 +295,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
 
       <form onSubmit={handleSubmit} key={mode}>
         {/* Hidden honeypot for bots */}
-        <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" className="hidden" />
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
 
         {isTeam ? (
           <>
@@ -244,7 +322,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                   <select id="league" name="league" className={selectClass} defaultValue={initialLeague}>
                     <option value="">Not sure yet</option>
                     {LEAGUES.map((l) => (
-                      <option key={l.slug} value={l.name}>{l.name}</option>
+                      <option key={l.slug} value={l.slug}>{l.name}</option>
                     ))}
                   </select>
                 </FieldBlock>
@@ -269,6 +347,52 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
               <FieldBlock label="Anything else we should know?" htmlFor="notes">
                 <Textarea id="notes" name="notes" rows={3} />
               </FieldBlock>
+            </Fieldset>
+
+            <Fieldset legend="Players">
+              <p className="text-sm text-[hsl(var(--gray))] m-0">
+                Add at least one player now, up to {MAX_ROSTER}. You can add the rest later. Players under 18 are approved from the contact email above.
+              </p>
+              {roster.map((p, i) => (
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_200px_auto] gap-3 items-end">
+                  <FieldBlock label={`Player ${i + 1} full name`} htmlFor={`roster_name_${i}`}>
+                    <Input
+                      id={`roster_name_${i}`}
+                      value={p.name}
+                      onChange={(e) => updatePlayer(i, 'name', e.target.value)}
+                      required
+                    />
+                  </FieldBlock>
+                  <FieldBlock label="Date of birth" htmlFor={`roster_dob_${i}`}>
+                    <Input
+                      id={`roster_dob_${i}`}
+                      type="date"
+                      value={p.dob}
+                      onChange={(e) => updatePlayer(i, 'dob', e.target.value)}
+                      required
+                    />
+                  </FieldBlock>
+                  {roster.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setRoster((r) => r.filter((_, idx) => idx !== i))}
+                      className="h-10 px-3 text-sm font-bold uppercase tracking-wider text-[hsl(var(--gray))] hover:text-[hsl(var(--black))]"
+                      aria-label={`Remove player ${i + 1}`}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+              {roster.length < MAX_ROSTER && (
+                <button
+                  type="button"
+                  onClick={() => setRoster((r) => [...r, emptyPlayer()])}
+                  className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--primary))]"
+                >
+                  + Add another player
+                </button>
+              )}
             </Fieldset>
           </>
         ) : (
@@ -300,7 +424,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                   <select id="league" name="league" className={selectClass} defaultValue={initialLeague}>
                     <option value="">Not sure yet</option>
                     {LEAGUES.map((l) => (
-                      <option key={l.slug} value={l.name}>{l.name}</option>
+                      <option key={l.slug} value={l.slug}>{l.name}</option>
                     ))}
                   </select>
                 </FieldBlock>
@@ -354,7 +478,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
             {sending ? 'Sending…' : isTeam ? 'Register team' : 'Sign up as a free agent'}
           </Button>
           <p className="text-sm text-[hsl(var(--gray))] mt-3 mb-0">
-            We will email you your division, league and venue, plus any next steps.
+            We will confirm your division, league and venue, and tell you the next steps.
           </p>
         </div>
       </form>
@@ -384,7 +508,7 @@ function RegisterPage() {
   const [params] = useSearchParams();
   const initialMode = params.get('type') === 'free-agent' ? 'free-agent' : 'team';
   const [mode, setMode] = useState(initialMode);
-  const initialLeague = LEAGUES.find((l) => l.slug === params.get('league'))?.name || '';
+  const initialLeague = LEAGUES.find((l) => l.slug === params.get('league'))?.slug || '';
   const formRef = useRef(null);
 
   const choose = (id) => {
@@ -408,19 +532,6 @@ function RegisterPage() {
         <p className="text-[hsl(var(--gray))] text-xl max-w-2xl mb-14">
           Bring your team to the court, or sign up on your own and we will find you a team. Schools, clubs, nonprofits and friends all welcome.
         </p>
-
-        <div className="rounded-2xl border border-[hsl(var(--primary))] bg-[hsl(var(--true-white))] p-6 mb-10 flex flex-col sm:flex-row sm:items-center gap-4">
-          <div className="flex-1">
-            <h3 className="text-2xl text-[hsl(var(--black))] m-0">REGISTER AND PAY ON FEDOS</h3>
-            <p className="text-[hsl(var(--gray))] m-0 mt-1">Players and parents: one account to register, pay, and see your team's schedule.</p>
-          </div>
-          <a
-            href={registerUrl(params.get('league') || 'chicago-futsal-league')}
-            className="inline-block text-center bg-[hsl(var(--primary))] text-white px-6 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary-dark))] transition-colors"
-          >
-            Register on FedOS
-          </a>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {MODES.map((m, i) => (
