@@ -136,9 +136,6 @@ function HomePage() {
         </div>
       </section>
 
-      <script src="https://thefedos.com/embed.js" data-widget="schedule" data-league="your-league-slug" async></script>
-      
-
       {/* AGE GROUPS */}
       <section className="py-20 md:py-28 bg-[hsl(var(--true-white))] border-y border-[hsl(var(--white))]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
