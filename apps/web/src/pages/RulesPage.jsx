@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { NETWORK } from '../data/leagues.js';
+import Photo from '../components/Photo.jsx';
 import { TRACKING } from '../data/divisions.js';
 
 const range = (g) => (g.length === 1 ? g[0] : `${g[0]}–${g[g.length - 1]}`);
@@ -98,6 +99,8 @@ function RulesPage() {
           Games follow FIFA Futsal Laws with a few league rules on top. Venues are Park District, high school
           and college gyms, depending on the age group.
         </p>
+
+        <Photo src="/images/gym-wide.jpg" alt="A full gym with teams in yellow bibs playing a game" className="aspect-[16/9] mb-12" width="1024" height="768" />
 
         <h2 className="text-[hsl(var(--black))] mb-6">FORMAT BY AGE GROUP</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import Photo from '../components/Photo.jsx';
 import { NETWORK, SEASON, gamesFor } from '../data/leagues.js';
 
 const PRICE = 75;
@@ -40,6 +41,8 @@ function PricingPage() {
         <p className="text-[hsl(var(--gray))] mb-12">
           {SEASON.teams} teams play {gamesFor(SEASON.teams)} games. The top flight, with {SEASON.topTeams} teams, plays {gamesFor(SEASON.topTeams)}.
         </p>
+
+        <Photo src="/images/gym-game.jpg" alt="Two players battling for the ball in a gym during a match, with a referee watching" className="aspect-[16/9] mb-12" focus="object-[50%62%]" width="896" height="1195" />
 
         <h2 className="text-[hsl(var(--black))] mb-6">WHAT'S INCLUDED</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">

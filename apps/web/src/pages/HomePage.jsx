@@ -8,7 +8,8 @@ import ProRelPyramid from '../components/ProRelPyramid.jsx';
 import SponsorStrip from '../components/SponsorStrip.jsx';
 import AgeGroups from '../components/AgeGroups.jsx';
 import { loginUrl } from '../lib/fedos-public.js';
-import Schedule from '../components/schedule.jsx';
+import Cutout from '../components/Cutout.jsx';
+import Photo from '../components/Photo.jsx';
 import { NETWORK, TIERS, LEAGUES, leaguesByTier } from '../data/leagues.js';
 
 const WHY = [
@@ -40,7 +41,7 @@ function HomePage() {
             <rect x="670" y="170" width="90" height="160" />
           </g>
         </svg>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="label-text text-[hsl(var(--primary-light))] font-bold tracking-widest mb-4 block">
               {LEAGUES.length} leagues · {LEAGUES.length} host venues
@@ -74,19 +75,60 @@ function HomePage() {
               </div>
             </div>
           </motion.div>
+
+          <motion.div className="hidden lg:block relative px-6 pb-8" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.15 }}>
+            <Cutout
+              src="/images/dribble-close.jpg"
+              alt="A player in a white jersey dribbling a ball"
+              className="aspect-[3/4] rotate-2 shadow-2xl ring-4 ring-white/10"
+              width="896" height="1195" eager
+            />
+            <Cutout
+              src="/images/dribble-cones.jpg"
+              alt="A player weaving the ball between cones in training"
+              tint="sand"
+              className="absolute -bottom-2 -left-2 w-44 aspect-square -rotate-3 shadow-xl ring-4 ring-[hsl(var(--black))]"
+              imgClassName="object-top"
+              width="896" height="1195"
+            />
+          </motion.div>
         </div>
       </section>
 
       {/* PHOTO */}
-      <section className="bg-[hsl(var(--black))] pb-0">
-        <img
-          src="/images/game-night.jpg"
-          alt="Players and a referee on an indoor futsal court, a player in an orange jersey standing over the ball"
-          className="w-full max-h-[70vh] object-cover"
-          width="828"
-          height="475"
-          loading="lazy"
-        />
+      <section className="py-20 md:py-28 bg-[hsl(var(--background))]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">ON THE COURT</span>
+          <h2 className="text-[hsl(var(--black))] mb-10">FUTSAL FOR EVERY KID</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Cutout
+              src="/images/kids-group.jpg"
+              alt="A group of young players in yellow and black shirts, laughing and posing together"
+              tint="white" className="aspect-[4/3] shadow-sm border border-[hsl(var(--table-border))]"
+              width="1195" height="896"
+            />
+            <Cutout
+              src="/images/girls-team.jpg"
+              alt="A girls team in yellow jerseys posing with their coach"
+              tint="white" className="aspect-[4/3] shadow-sm border border-[hsl(var(--table-border))]"
+              width="1295" height="816"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* GAME DAY */}
+      <section className="py-20 md:py-28 bg-[hsl(var(--true-white))] border-y border-[hsl(var(--white))]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">GAME DAY</span>
+          <h2 className="text-[hsl(var(--black))] mb-10">REAL GAMES, REAL GYMS</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 auto-rows-[14rem] md:auto-rows-[20rem] gap-4 md:gap-6">
+            <Photo src="/images/gym-game.jpg" alt="Two players battling for the ball in a gym during a match, with a referee watching" className="col-span-2 md:col-span-1 md:row-span-2" focus="object-[50%62%]" width="896" height="1195" />
+            <Photo src="/images/gym-action.jpg" alt="Players in purple and blue closing in on the ball during a game" className="col-span-2" width="1024" height="768" />
+            <Photo src="/images/gym-practice.jpg" alt="Kids in orange bibs and a coach on a gym floor with a ball" focus="object-[50%55%]" width="768" height="1024" />
+            <Photo src="/images/gym-wide.jpg" alt="A full gym with teams in yellow bibs playing a game" width="1024" height="768" />
+          </div>
+        </div>
       </section>
 
       {/* LEAGUES */}
@@ -147,13 +189,22 @@ function HomePage() {
       <section className="py-20 md:py-28 bg-[hsl(var(--background))]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-[hsl(var(--black))] mb-10">WHY FUTSAL</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_20rem] gap-8 items-stretch">
+           <div className="grid grid-cols-1 gap-6">
             {WHY.map((w) => (
               <div key={w.title} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
                 <h3 className="text-2xl text-[hsl(var(--black))] mb-2">{w.title.toUpperCase()}</h3>
                 <p className="text-[hsl(var(--gray))] m-0">{w.text}</p>
               </div>
             ))}
+           </div>
+           <Cutout
+              src="/images/dribble-cones.jpg"
+              alt="A player weaving the ball between cones in training"
+              tint="lavender" className="hidden lg:block min-h-[22rem]"
+              imgClassName="object-top"
+              width="896" height="1195"
+           />
           </div>
         </div>
       </section>

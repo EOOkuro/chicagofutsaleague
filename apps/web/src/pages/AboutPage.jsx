@@ -1,6 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import Cutout from '../components/Cutout.jsx';
+import Photo from '../components/Photo.jsx';
 import { NETWORK, TIERS, LEAGUES, leaguesByTier } from '../data/leagues.js';
 
 function AboutPage() {
@@ -17,6 +19,13 @@ function AboutPage() {
           {NETWORK.name} is a network of futsal leagues with host venues across Chicago, joined by promotion
           and relegation. Finish near the top and you move up a level. Finish near the bottom and you drop down.
         </p>
+
+        <Cutout
+          src="/images/girls-team.jpg"
+          alt="A girls team in yellow jerseys posing with their coach"
+          tint="white" className="aspect-[16/10] mb-14 border border-[hsl(var(--table-border))]"
+          width="1295" height="816"
+        />
 
         <h2 className="text-[hsl(var(--black))] mb-6">THE LEVELS</h2>
         <div className="space-y-4 mb-14">
@@ -37,6 +46,8 @@ function AboutPage() {
             </div>
           ))}
         </div>
+
+        <Photo src="/images/gym-action.jpg" alt="Players in purple and blue closing in on the ball during a game" className="aspect-[4/3] mb-14" width="1024" height="768" />
 
         <Link
           to="/contact"
