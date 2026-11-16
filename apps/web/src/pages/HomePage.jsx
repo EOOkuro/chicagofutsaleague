@@ -95,7 +95,19 @@ function HomePage() {
         </div>
       </section>
 
-      {/* PHOTO */}
+      {/* PHOTO (original) */}
+      <section className="bg-[hsl(var(--black))] pb-0">
+        <img
+          src="/images/game-night.jpg"
+          alt="Players and a referee on an indoor futsal court, a player in an orange jersey standing over the ball"
+          className="w-full max-h-[70vh] object-cover"
+          width="828"
+          height="475"
+          loading="lazy"
+        />
+      </section>
+
+      {/* ON THE COURT (cutouts) */}
       <section className="py-20 md:py-28 bg-[hsl(var(--background))]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">ON THE COURT</span>
