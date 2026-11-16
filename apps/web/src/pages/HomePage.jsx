@@ -8,6 +8,7 @@ import ProRelPyramid from '../components/ProRelPyramid.jsx';
 import SponsorStrip from '../components/SponsorStrip.jsx';
 import AgeGroups from '../components/AgeGroups.jsx';
 import { loginUrl } from '../lib/fedos-public.js';
+import Schedule from '../components/schedule.jsx';
 import { NETWORK, TIERS, LEAGUES, leaguesByTier } from '../data/leagues.js';
 
 const WHY = [
