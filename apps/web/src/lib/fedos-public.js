@@ -68,11 +68,12 @@ export const getAdultRosters = (league, division) => cached(`ro|${league}|${divi
 export const searchFedos = (q) => (q || "").trim().length < 2 ? Promise.resolve([]) : cached(`se|${q.trim().toLowerCase()}`, () => rpc("search_fedos", { q: q.trim() }));
 
 // ── Where people go to register, pay and sign in: always FedOS.
-export const registerUrl = (slug) => `${app()}/register/${encodeURIComponent(slug)}`;
-export const loginUrl = (siteName, role) => {
+export const registerUrl = (slug, lang) => `${app()}/register/${encodeURIComponent(slug)}${lang === "es" ? "?lang=es" : ""}`;
+export const loginUrl = (siteName, role, lang) => {
   const q = new URLSearchParams();
   if (siteName) q.set("site", siteName);
   if (role) q.set("role", role); // "player" | "guardian"
+  if (lang === "es") q.set("lang", "es"); // FedOS opens in Spanish
   const s = q.toString();
   return `${app()}/login${s ? `?${s}` : ""}`;
 };
@@ -81,5 +82,5 @@ export const inviteUrl = (token) => `${app()}/invite/${encodeURIComponent(token)
 // ── Formatting helpers (Chicago time, which is where every league plays)
 const CHI = "America/Chicago";
 export const chicagoDate = (iso) => { const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: CHI, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(iso)).map((x) => [x.type, x.value])); return `${p.year}-${p.month}-${p.day}`; };
-export const chicagoTime = (iso) => new Intl.DateTimeFormat("en-US", { timeZone: CHI, hour: "numeric", minute: "2-digit" }).format(new Date(iso));
-export const niceWhen = (iso) => new Intl.DateTimeFormat("en-US", { timeZone: CHI, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
+export const chicagoTime = (iso, locale = "en-US") => new Intl.DateTimeFormat(locale, { timeZone: CHI, hour: "numeric", minute: "2-digit" }).format(new Date(iso));
+export const niceWhen = (iso, locale = "en-US") => new Intl.DateTimeFormat(locale, { timeZone: CHI, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(iso));

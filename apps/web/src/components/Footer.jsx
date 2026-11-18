@@ -2,8 +2,10 @@ import { loginUrl } from '../lib/fedos-public.js';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { NETWORK, LEAGUES } from '../data/leagues.js';
+import { useT } from '../lib/i18n.jsx';
 
 function Footer() {
+  const { t, lang } = useT();
   return (
     <footer className="bg-[hsl(var(--black))] text-[hsl(var(--true-white))] border-t-4 border-[hsl(var(--primary))] pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,12 +18,12 @@ function Footer() {
               <span className="text-2xl font-['Bebas_Neue'] tracking-wide">{NETWORK.name.toUpperCase()}</span>
             </div>
             <p className="text-[hsl(var(--gray))] text-sm leading-relaxed">
-              {LEAGUES.length} leagues and {LEAGUES.length} host venues bringing futsal to every part of Chicago.
+              {t('{n} leagues and {n} host venues bringing futsal to every part of Chicago.', { n: LEAGUES.length })}
             </p>
           </div>
 
           <div>
-            <h4 className="label-text text-[hsl(var(--primary))] mb-4 text-lg">Leagues</h4>
+            <h4 className="label-text text-[hsl(var(--primary))] mb-4 text-lg">{t('Leagues')}</h4>
             <ul className="space-y-2 p-0 list-none">
               {LEAGUES.map((l) => (
                 <li key={l.slug}>
@@ -34,21 +36,21 @@ function Footer() {
           </div>
 
           <div>
-            <h4 className="label-text text-[hsl(var(--primary))] mb-4 text-lg">Information</h4>
+            <h4 className="label-text text-[hsl(var(--primary))] mb-4 text-lg">{t('Information')}</h4>
             <ul className="space-y-2 p-0 list-none">
-              <li><Link to="/about" className="text-[hsl(var(--gray))] hover:text-white transition-colors">About</Link></li>
-              <li><Link to="/pricing" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link to="/rules" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Format and rules</Link></li>
-              <li><Link to="/sponsors" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Sponsors</Link></li>
-              <li><Link to="/register" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Register</Link></li>
-              <li><a href={loginUrl('chicago-futsal-league')} className="text-[hsl(var(--gray))] hover:text-white transition-colors">Player sign in</a></li>
-              <li><Link to="/contact" className="text-[hsl(var(--gray))] hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/about" className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('About')}</Link></li>
+              <li><Link to="/pricing" className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('Pricing')}</Link></li>
+              <li><Link to="/rules" className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('Format and rules')}</Link></li>
+              <li><Link to="/sponsors" className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('Sponsors')}</Link></li>
+              <li><Link to="/register" className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('Register')}</Link></li>
+              <li><a href={loginUrl('chicago-futsal-league', undefined, lang)} className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('Player sign in')}</a></li>
+              <li><Link to="/contact" className="text-[hsl(var(--gray))] hover:text-white transition-colors">{t('Contact')}</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-white/10 pt-6 text-sm text-[hsl(var(--gray))]">
-          © {new Date().getFullYear()} {NETWORK.name}. All rights reserved.
+          {t('© {year} {name}. All rights reserved.', { year: new Date().getFullYear(), name: NETWORK.name })}
         </div>
       </div>
     </footer>

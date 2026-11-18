@@ -16,6 +16,7 @@ import RulesPage from './pages/RulesPage.jsx';
 import ContactPage from './pages/ContactPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import { NETWORK, LEAGUES } from './data/leagues.js';
+import { useT } from './lib/i18n.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -26,13 +27,15 @@ function ScrollToTop() {
 }
 
 function App() {
+  const { t, lang } = useT();
   return (
     <Router>
       <ScrollToTop />
       <div className="min-h-screen bg-[hsl(var(--background))] flex flex-col">
         <Helmet>
-          <title>{NETWORK.name} | {NETWORK.tagline}</title>
-          <meta name="description" content={`${LEAGUES.length} futsal leagues across Chicago, from UIC to neighborhood hubs on every side of the city.`} />
+          <html lang={lang} />
+          <title>{`${NETWORK.name} | ${t(NETWORK.tagline)}`}</title>
+          <meta name="description" content={t('{n} futsal leagues across Chicago, from UIC to neighborhood hubs on every side of the city.', { n: LEAGUES.length })} />
           <meta name="robots" content="index, follow" />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={NETWORK.name} />
@@ -59,9 +62,9 @@ function App() {
               element={
                 <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 pt-20">
                   <h1 className="text-6xl text-[hsl(var(--black))] mb-4">404</h1>
-                  <p className="text-xl text-[hsl(var(--gray))] mb-8">The page you are looking for does not exist.</p>
+                  <p className="text-xl text-[hsl(var(--gray))] mb-8">{t('The page you are looking for does not exist.')}</p>
                   <Link to="/" className="bg-[hsl(var(--primary))] text-white px-6 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary-dark))] transition-colors">
-                    Back to Home
+                    {t('Back to Home')}
                   </Link>
                 </div>
               }

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { NETWORK } from '../data/leagues.js';
 import { loginUrl } from '../lib/fedos-public.js';
+import { useT, LangSwitch } from '../lib/i18n.jsx';
 
 const NAV = [
   { name: 'Leagues', path: '/leagues' },
@@ -18,6 +19,7 @@ const NAV = [
 ];
 
 function Header() {
+  const { t, lang } = useT();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
@@ -45,16 +47,16 @@ function Header() {
             <div className="w-10 h-10 bg-[hsl(var(--primary))] rounded-lg flex items-center justify-center transform rotate-3">
               <span className="text-white font-['Bebas_Neue'] text-2xl tracking-wider">{NETWORK.short}</span>
             </div>
-            <span className="text-[hsl(var(--true-white))] font-['Bebas_Neue'] text-2xl tracking-wide hidden sm:block">
+            <span className="text-[hsl(var(--true-white))] font-['Bebas_Neue'] text-2xl tracking-wide hidden sm:block lg:hidden xl:block">
               {NETWORK.name.toUpperCase()}
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
             {NAV.map((l) =>
               l.role ? (
-                <a key={l.name} href={loginUrl('chicago-futsal-league', l.role)} className="nav-text text-sm text-[hsl(var(--white))] hover:text-[hsl(var(--primary-light))] transition-colors">
-                  {l.name}
+                <a key={l.name} href={loginUrl('chicago-futsal-league', l.role, lang)} className="nav-text text-sm text-[hsl(var(--white))] hover:text-[hsl(var(--primary-light))] transition-colors">
+                  {t(l.name)}
                 </a>
               ) : l.highlight ? (
                 <Link
@@ -62,7 +64,7 @@ function Header() {
                   to={l.path}
                   className="nav-text text-sm font-bold px-4 py-2 rounded-lg bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary-dark))] transition-colors"
                 >
-                  {l.name}
+                  {t(l.name)}
                 </Link>
               ) : (
                 <Link
@@ -74,16 +76,17 @@ function Header() {
                       : 'text-[hsl(var(--white))] hover:text-[hsl(var(--primary-light))]'
                   }`}
                 >
-                  {l.name}
+                  {t(l.name)}
                 </Link>
               )
             )}
+            <LangSwitch />
           </nav>
 
           <button
-            className="md:hidden text-[hsl(var(--true-white))] z-50 p-2"
+            className="lg:hidden text-[hsl(var(--true-white))] z-50 p-2"
             onClick={() => setOpen((o) => !o)}
-            aria-label="Toggle menu"
+            aria-label={t('Toggle menu')}
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -91,11 +94,12 @@ function Header() {
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 bg-[hsl(var(--black))] border-t border-[hsl(var(--gray))]/20 shadow-xl md:hidden">
+        <div className="absolute top-full left-0 right-0 bg-[hsl(var(--black))] border-t border-[hsl(var(--gray))]/20 shadow-xl lg:hidden">
           <div className="flex flex-col px-4 py-6 gap-4">
+            <LangSwitch className="self-start" />
             {NAV.map((l) => l.role ? (
-              <a key={l.name} href={loginUrl('chicago-futsal-league', l.role)} className="nav-text text-lg py-2 border-b border-[hsl(var(--gray))]/20 text-[hsl(var(--white))]">
-                {l.name}
+              <a key={l.name} href={loginUrl('chicago-futsal-league', l.role, lang)} className="nav-text text-lg py-2 border-b border-[hsl(var(--gray))]/20 text-[hsl(var(--white))]">
+                {t(l.name)}
               </a>
             ) : (
               <Link
@@ -109,7 +113,7 @@ function Header() {
                       }`
                 }
               >
-                {l.name}
+                {t(l.name)}
               </Link>
             ))}
           </div>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { NETWORK, LEAGUES } from '../data/leagues.js';
+import { NETWORK, LEAGUES, leagueField } from '../data/leagues.js';
+import { useT } from '../lib/i18n.jsx';
 import { AGE_OPTIONS } from '../data/divisions.js';
 import { TEAMS, REC_LEAGUES, fieldsGroup, statusOf, openGroups, groupLabel } from '../data/teams.js';
 
@@ -9,6 +10,7 @@ const selectClass =
   'h-10 rounded-md border border-input bg-[hsl(var(--true-white))] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]';
 
 function TeamCard({ team }) {
+  const { t } = useT();
   const status = statusOf(team);
   const open = openGroups(team);
   return (
@@ -19,7 +21,7 @@ function TeamCard({ team }) {
             status === 'filled' ? 'text-[hsl(var(--gray))]' : 'text-[hsl(var(--primary))]'
           }`}
         >
-          {status === 'filled' ? 'FILLED' : `SPOTS OPEN · ${open.length} AGE GROUP${open.length === 1 ? '' : 'S'}`}
+          {status === 'filled' ? t('FILLED') : t(open.length === 1 ? 'SPOTS OPEN · {n} AGE GROUP' : 'SPOTS OPEN · {n} AGE GROUPS', { n: open.length })}
         </span>
       )}
       <h4 className="text-2xl text-[hsl(var(--black))] m-0">{team.name.toUpperCase()}</h4>
@@ -37,7 +39,7 @@ function TeamCard({ team }) {
                     : 'bg-[hsl(var(--primary))] text-white'
                 }`}
               >
-                {groupLabel(team, g)}
+                {t(groupLabel(team, g))}
               </span>
             );
           })}
@@ -49,7 +51,7 @@ function TeamCard({ team }) {
           to="/register?type=free-agent"
           className="mt-4 inline-block self-start text-sm font-bold uppercase tracking-wider text-[hsl(var(--primary))]"
         >
-          Join as a free agent →
+          {t('Join as a free agent →')}
         </Link>
       )}
     </div>
@@ -75,6 +77,7 @@ function Section({ title, sub, teams, empty }) {
 }
 
 function TeamsPage() {
+  const { t } = useT();
   const [group, setGroup] = useState('');
   const [openOnly, setOpenOnly] = useState(false);
   const filtering = Boolean(group) || openOnly;
@@ -95,29 +98,29 @@ function TeamsPage() {
   return (
     <div className="pt-32 pb-24 bg-[hsl(var(--background))] min-h-screen">
       <Helmet>
-        <title>Teams | {NETWORK.name}</title>
-        <meta name="description" content="Every team signed up for Chicago Futsal League and the rec leagues, by league and age group." />
+        <title>{`${t('Teams')} | ${NETWORK.name}`}</title>
+        <meta name="description" content={t('Every team signed up for Chicago Futsal League and the rec leagues, by league and age group.')} />
       </Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">THE TEAMS</span>
-        <h1 className="text-[hsl(var(--black))] mb-4">TEAMS</h1>
+        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">{t('THE TEAMS')}</span>
+        <h1 className="text-[hsl(var(--black))] mb-4">{t('TEAMS')}</h1>
         <p className="text-[hsl(var(--gray))] text-xl max-w-2xl mb-10">
-          Teams signed up for the season, listed by league, with their age groups.
+          {t('Teams signed up for the season, listed by league, with their age groups.')}
         </p>
 
         <div className="flex flex-wrap items-center gap-4 mb-10">
-          <select value={group} onChange={(e) => setGroup(e.target.value)} className={selectClass} aria-label="Age group">
-            <option value="">All age groups</option>
+          <select value={group} onChange={(e) => setGroup(e.target.value)} className={selectClass} aria-label={t('Age group')}>
+            <option value="">{t('All age groups')}</option>
             {AGE_OPTIONS.map((g) => (
-              <option key={g} value={g}>{g}</option>
+              <option key={g} value={g}>{t(g)}</option>
             ))}
           </select>
           <label className="flex items-center gap-2 text-sm text-[hsl(var(--black))] cursor-pointer">
             <input type="checkbox" checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} />
-            Open spots only
+            {t('Open spots only')}
           </label>
           <span className="text-sm text-[hsl(var(--gray))] ml-auto">
-            {shown.length} {shown.length === 1 ? 'team' : 'teams'}
+            {shown.length === 1 ? t('{n} team', { n: 1 }) : t('{n} teams', { n: shown.length })}
           </span>
         </div>
 
@@ -128,9 +131,9 @@ function TeamsPage() {
             <Section
               key={l.slug}
               title={l.name}
-              sub={`${l.area} · ${l.venue} · every age group`}
+              sub={`${leagueField(t, l, 'area')} · ${l.venue} · ${t('every age group')}`}
               teams={teams}
-              empty="No teams yet."
+              empty={t('No teams yet.')}
             />
           );
         })}
@@ -142,7 +145,7 @@ function TeamsPage() {
             <Section
               key={r.id}
               title={r.name}
-              sub={[r.area, r.venue].filter(Boolean).join(' · ')}
+              sub={[t(r.area), r.venue].filter(Boolean).join(' · ')}
               teams={teams}
               empty=""
             />
@@ -150,19 +153,19 @@ function TeamsPage() {
         })}
 
         {unplaced.length > 0 && (
-          <Section title="Waiting for a league" sub="Signed up, league not set yet." teams={unplaced} empty="" />
+          <Section title={t('Waiting for a league')} sub={t('Signed up, league not set yet.')} teams={unplaced} empty="" />
         )}
 
-        {filtering && shown.length === 0 && <p className="text-[hsl(var(--gray))] mb-12">No teams match that yet.</p>}
+        {filtering && shown.length === 0 && <p className="text-[hsl(var(--gray))] mb-12">{t('No teams match that yet.')}</p>}
 
         <div className="bg-[hsl(var(--black))] rounded-2xl p-8 text-center">
-          <h3 className="text-white m-0 mb-2">DON'T SEE YOUR TEAM?</h3>
-          <p className="text-[hsl(var(--white))] mb-6">Register it and it will show up here.</p>
+          <h3 className="text-white m-0 mb-2">{t("DON'T SEE YOUR TEAM?")}</h3>
+          <p className="text-[hsl(var(--white))] mb-6">{t('Register it and it will show up here.')}</p>
           <Link
             to="/register?type=team"
             className="inline-block bg-[hsl(var(--primary))] text-white px-8 py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-[hsl(var(--primary-dark))] transition-colors"
           >
-            Register a team
+            {t('Register a team')}
           </Link>
         </div>
       </div>

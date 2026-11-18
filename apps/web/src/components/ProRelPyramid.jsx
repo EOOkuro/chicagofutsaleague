@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { LEAGUES, PROMOTIONS, RELEGATIONS } from '../data/leagues.js';
+import { useT } from '../lib/i18n.jsx';
 
 // Pro/rel pyramid. Reads from leagues.js by default, so editing leagues,
 // PROMOTIONS or RELEGATIONS there updates this automatically.
@@ -13,6 +14,7 @@ const sumMoves = (moves, tierOf, fromTier, toTier) =>
     .reduce((n, m) => n + m.count, 0);
 
 function ProRelPyramid({ leagues = LEAGUES, promotions = PROMOTIONS, relegations = RELEGATIONS }) {
+  const { t } = useT();
   const tierOf = Object.fromEntries(leagues.map((l) => [l.slug, l.tier]));
   const tiers = [...new Set(leagues.map((l) => l.tier))].sort((a, b) => a - b);
 
@@ -42,7 +44,7 @@ function ProRelPyramid({ leagues = LEAGUES, promotions = PROMOTIONS, relegations
                   isTop ? 'text-[hsl(var(--true-white))]' : 'text-[hsl(var(--primary))]'
                 }`}
               >
-                LEVEL {tier}
+                {t('LEVEL {tier}', { tier })}
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 {inTier.map((l) => (
@@ -55,7 +57,7 @@ function ProRelPyramid({ leagues = LEAGUES, promotions = PROMOTIONS, relegations
                       {l.name}
                     </span>
                     <span className="block text-xs text-[hsl(var(--gray))] mt-1">
-                      {l.teams} teams
+                      {t('{n} teams', { n: l.teams })}
                     </span>
                   </Link>
                 ))}
@@ -65,10 +67,10 @@ function ProRelPyramid({ leagues = LEAGUES, promotions = PROMOTIONS, relegations
             {nextTier && (
               <div className="flex items-center justify-center gap-5 py-3 text-xs label-text font-bold text-[hsl(var(--gray))]">
                 <span className="inline-flex items-center gap-1">
-                  <ArrowUp className="w-4 h-4 text-[hsl(var(--primary))]" /> {promoted} promoted
+                  <ArrowUp className="w-4 h-4 text-[hsl(var(--primary))]" /> {t('{n} promoted', { n: promoted })}
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <ArrowDown className="w-4 h-4 text-[hsl(var(--primary))]" /> {relegated} relegated
+                  <ArrowDown className="w-4 h-4 text-[hsl(var(--primary))]" /> {t('{n} relegated', { n: relegated })}
                 </span>
               </div>
             )}

@@ -1,3 +1,5 @@
+import { tr } from '../lib/lang.js';
+
 // ─────────────────────────────────────────────────────────────
 // ONE place to edit league info. Every page reads from here.
 // ─────────────────────────────────────────────────────────────
@@ -27,18 +29,25 @@ export const TIERS = [
     label: 'Top flight',
     teams: SEASON.topTeams,
     blurb: `${SEASON.topTeams} teams, ${topGames} games over ${SEASON.months} months. The bottom 2 are relegated to Level 2 and replaced by the top team from each side league.`,
+    // tpl + vars is the same sentence, used by the site so it can be shown in Spanish. Keep it in step with blurb.
+    tpl: '{top} teams, {games} games over {months} months. The bottom 2 are relegated to Level 2 and replaced by the top team from each side league.',
+    vars: { top: SEASON.topTeams, games: topGames, months: SEASON.months },
   },
   {
     tier: 2,
     label: 'Side leagues',
     teams: SEASON.teams,
     blurb: `${SEASON.teams} teams per league, ${games} games over ${SEASON.months} months. The top team in each league is promoted to the Chicago Futsal League. The bottom 2 are relegated to Level 3.`,
+    tpl: '{teams} teams per league, {games} games over {months} months. The top team in each league is promoted to the Chicago Futsal League. The bottom 2 are relegated to Level 3.',
+    vars: { teams: SEASON.teams, games, months: SEASON.months },
   },
   {
     tier: 3,
     label: 'Regional leagues',
     teams: SEASON.teams,
     blurb: `${SEASON.teams} teams per league, ${games} games over ${SEASON.months} months. The top team in each league is promoted to Level 2.`,
+    tpl: '{teams} teams per league, {games} games over {months} months. The top team in each league is promoted to Level 2.',
+    vars: { teams: SEASON.teams, games, months: SEASON.months },
   },
 ];
 
@@ -83,6 +92,7 @@ export const LEAGUES = [
     venue: 'St. Moses the Black',
     status: 'Coming soon',
     blurb: `Far South Side and lakefront teams east of ${SPLIT_STREET}, hosted at St. Moses the Black.`,
+    tpl: { area: 'East of {street}', blurb: 'Far South Side and lakefront teams east of {street}, hosted at St. Moses the Black.' },
   },
   {
     slug: 'southwest-chi-futsal-league',
@@ -93,6 +103,7 @@ export const LEAGUES = [
     venue: 'Wintrust Sports Complex',
     status: 'Coming soon',
     blurb: `Southwest side teams west of ${SPLIT_STREET}, hosted at Wintrust Sports Complex.`,
+    tpl: { area: 'West of {street}', blurb: 'Southwest side teams west of {street}, hosted at Wintrust Sports Complex.' },
   },
   {
     slug: 'outwest-futsal-league',
@@ -117,6 +128,14 @@ export const LEAGUES = [
 ];
 
 export const leagueBySlug = (slug) => LEAGUES.find((l) => l.slug === slug);
+
+// League text in the visitor's language. field: 'area' | 'blurb' | 'status'. Pass the t() from useT().
+export const leagueField = (t, league, field) => {
+  const tpl = league.tpl && league.tpl[field];
+  return tpl ? t(tpl, { street: SPLIT_STREET }) : t(league[field]);
+};
+// A level's description in the visitor's language.
+export const tierBlurb = (t, tier) => t(tier.tpl, tier.vars);
 export const leaguesByTier = (tier) => LEAGUES.filter((l) => l.tier === tier);
 
 // ─────────────────────────────────────────────────────────────
@@ -144,35 +163,31 @@ export const RELEGATIONS = [
 
 const nameOf = (slug) => leagueBySlug(slug)?.name ?? slug;
 const sum = (list) => list.reduce((n, m) => n + m.count, 0);
-const plural = (n, one, many) => (n === 1 ? one : many);
 
-// Plain-English lines describing what happens to a league's teams each season.
-export function describeMoves(slug) {
+// Plain-English lines describing what happens to a league's teams each season. Pass the t() from useT() for Spanish.
+export function describeMoves(slug, t = tr) {
   const promotedOut = PROMOTIONS.filter((m) => m.from === slug);
   const relegatedOut = RELEGATIONS.filter((m) => m.from === slug);
   const promotedIn = PROMOTIONS.filter((m) => m.to === slug);
   const relegatedIn = RELEGATIONS.filter((m) => m.to === slug);
   const lines = [];
+  const join = (list) => list.join(` ${t('and')} `);
 
   const up = sum(promotedOut);
   if (up > 0) {
-    lines.push(
-      `${plural(up, 'The top team is', `The top ${up} teams are`)} promoted to ${promotedOut.map((m) => nameOf(m.to)).join(' and ')}.`
-    );
+    const to = join(promotedOut.map((m) => nameOf(m.to)));
+    lines.push(up === 1 ? t('The top team is promoted to {to}.', { to }) : t('The top {n} teams are promoted to {to}.', { n: up, to }));
   }
   const down = sum(relegatedOut);
   if (down > 0) {
-    lines.push(
-      `${plural(down, 'The bottom team is', `The bottom ${down} teams are`)} relegated: ${relegatedOut
-        .map((m) => `${m.count} to ${nameOf(m.to)}`)
-        .join(', ')}.`
-    );
+    const list = relegatedOut.map((m) => t('{count} to {name}', { count: m.count, name: nameOf(m.to) })).join(', ');
+    lines.push(down === 1 ? t('The bottom team is relegated: {list}.', { list }) : t('The bottom {n} teams are relegated: {list}.', { n: down, list }));
   }
   if (promotedIn.length > 0) {
-    lines.push(`Receives ${promotedIn.map((m) => `${m.count} promoted from ${nameOf(m.from)}`).join(' and ')}.`);
+    lines.push(t('Receives {list}.', { list: join(promotedIn.map((m) => t('{count} promoted from {name}', { count: m.count, name: nameOf(m.from) }))) }));
   }
   if (relegatedIn.length > 0) {
-    lines.push(`Receives ${relegatedIn.map((m) => `${m.count} relegated from ${nameOf(m.from)}`).join(' and ')}.`);
+    lines.push(t('Receives {list}.', { list: join(relegatedIn.map((m) => t('{count} relegated from {name}', { count: m.count, name: nameOf(m.from) }))) }));
   }
   return lines;
 }

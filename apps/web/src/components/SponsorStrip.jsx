@@ -1,7 +1,9 @@
 import React from 'react';
 import { SPONSORS } from '../data/sponsors.js';
+import { useT } from '../lib/i18n.jsx';
 
 function Logo({ sponsor }) {
+  const { t } = useT();
   const img = (
     <img
       src={sponsor.logo}
@@ -17,7 +19,7 @@ function Logo({ sponsor }) {
       href={sponsor.url}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`${sponsor.name} (opens their website)`}
+      aria-label={t('{name} (opens their website)', { name: sponsor.name })}
       className={`${box} hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[hsl(var(--primary))]`}
     >
       {img}
@@ -28,11 +30,12 @@ function Logo({ sponsor }) {
 }
 
 function SponsorStrip({ className = '' }) {
+  const { t } = useT();
   return (
     <section className={`py-16 md:py-20 bg-[hsl(var(--true-white))] border-y border-[hsl(var(--white))] ${className}`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">OUR SPONSORS</span>
-        <h2 className="text-[hsl(var(--black))] mb-10">THANK YOU TO OUR PARTNERS</h2>
+        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">{t('OUR SPONSORS')}</span>
+        <h2 className="text-[hsl(var(--black))] mb-10">{t('THANK YOU TO OUR PARTNERS')}</h2>
         <div className="flex flex-wrap justify-center gap-6">
           {SPONSORS.map((s) => (
             <Logo key={s.id} sponsor={s} />

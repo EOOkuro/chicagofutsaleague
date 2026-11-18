@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AgeGroups from '../components/AgeGroups.jsx';
 import { NETWORK, LEAGUES } from '../data/leagues.js';
+import { useT } from '../lib/i18n.jsx';
 import {
   AGE_OPTIONS,
   TEAM_TYPES,
@@ -73,12 +74,13 @@ function Fieldset({ legend, children }) {
 }
 
 function DivisionFields({ group, setGroup, gender, setGender }) {
+  const { t } = useT();
   const options = genderOptions(group);
   const tracking = trackingFor(group);
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <FieldBlock label="Age group" htmlFor="ageGroup">
+        <FieldBlock label={t('Age group')} htmlFor="ageGroup">
           <select
             id="ageGroup"
             name="age_group"
@@ -90,16 +92,16 @@ function DivisionFields({ group, setGroup, gender, setGender }) {
               setGender('');
             }}
           >
-            <option value="">Select</option>
+            <option value="">{t('Select')}</option>
             {AGE_OPTIONS.map((g) => (
-              <option key={g} value={g}>{g}</option>
+              <option key={g} value={g}>{t(g)}</option>
             ))}
           </select>
         </FieldBlock>
         <FieldBlock
-          label="Division"
+          label={t('Division')}
           htmlFor="division"
-          hint={group && options.includes('Coed') ? 'Coed is encouraged in this age group if your team is comfortable with it.' : undefined}
+          hint={group && options.includes('Coed') ? t('Coed is encouraged in this age group if your team is comfortable with it.') : undefined}
         >
           <select
             id="division"
@@ -110,16 +112,16 @@ function DivisionFields({ group, setGroup, gender, setGender }) {
             onChange={(e) => setGender(e.target.value)}
             disabled={!group}
           >
-            <option value="">{group ? 'Select' : 'Choose an age group first'}</option>
+            <option value="">{group ? t('Select') : t('Choose an age group first')}</option>
             {options.map((g) => (
-              <option key={g} value={g}>{g}</option>
+              <option key={g} value={g}>{t(g)}</option>
             ))}
           </select>
         </FieldBlock>
       </div>
       {tracking && (
         <p className="text-sm text-[hsl(var(--gray))] bg-[hsl(var(--light-bg))] rounded-lg px-4 py-3 m-0">
-          <strong className="text-[hsl(var(--black))]">{`${group}: ${tracking.title}.`}</strong> {tracking.text}
+          <strong className="text-[hsl(var(--black))]">{`${group}: ${t(tracking.title)}.`}</strong> {t(tracking.text)}
         </p>
       )}
     </>
@@ -131,6 +133,7 @@ const emptyPlayer = () => ({ name: '', dob: '' });
 const DEFAULT_LEAGUE_SLUG = 'chicago-futsal-league';
 
 function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
+  const { t, lang } = useT();
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(null); // { email, players } after a successful send
   const [error, setError] = useState('');
@@ -156,6 +159,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
       site: NETWORK.name,
       registration_type: isTeam ? 'Team' : 'Free agent',
       website: v.website || '', // spam trap, stays empty for real people
+      preferred_language: lang, // 'en' | 'es', so staff can follow up in the right language
     };
     if (isTeam) {
       return {
@@ -226,7 +230,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
     try {
       const res = await submitRegistration(slug, buildFormData(v));
       setDone({ email: v.email, players: res?.players ?? 0 });
-      toast.success('Registration received!', { description: 'It is saved in FedOS.' });
+      toast.success(t('Registration received!'), { description: t('It is saved in FedOS.') });
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (err) {
       setError(err.message);
@@ -238,20 +242,20 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
   if (done) {
     return (
       <div ref={formRef} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-8 md:p-12 text-center">
-        <h3 className="text-4xl text-[hsl(var(--black))] mb-3">YOU'RE REGISTERED</h3>
+        <h3 className="text-4xl text-[hsl(var(--black))] mb-3">{t("YOU'RE REGISTERED")}</h3>
         <p className="text-[hsl(var(--gray))] max-w-md mx-auto mb-3">
-          We got your {isTeam ? 'team' : 'free agent'} registration.
+          {t('We got your {kind} registration.', { kind: t(isTeam ? 'team' : 'free agent') })}
         </p>
         <p className="text-[hsl(var(--gray))] max-w-md mx-auto mb-6">
-          <strong className="text-[hsl(var(--black))]">Next step:</strong> create a free FedOS account with{' '}
-          <strong className="text-[hsl(var(--black))]">{done.email}</strong> to approve the registration and pay.
+          <strong className="text-[hsl(var(--black))]">{t('Next step:')}</strong> {t('create a free FedOS account with')}{' '}
+          <strong className="text-[hsl(var(--black))]">{done.email}</strong> {t('to approve the registration and pay.')}
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <a
-            href={loginUrl(NETWORK.name, isTeam ? undefined : youth ? 'guardian' : 'player')}
+            href={loginUrl(NETWORK.name, isTeam ? undefined : youth ? 'guardian' : 'player', lang)}
             className="inline-block bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary-dark))] text-white px-6 py-2.5 rounded-md text-sm font-bold uppercase tracking-wider transition-colors"
           >
-            Continue in FedOS
+            {t('Continue in FedOS')}
           </a>
           <Button
             type="button"
@@ -261,7 +265,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
             }}
             className="bg-transparent border border-[hsl(var(--black))] text-[hsl(var(--black))] hover:bg-[hsl(var(--black))] hover:text-white font-bold uppercase tracking-wider"
           >
-            Register another {isTeam ? 'team' : 'player'}
+            {t('Register another {kind}', { kind: t(isTeam ? 'team' : 'player') })}
           </Button>
         </div>
       </div>
@@ -271,8 +275,8 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
   return (
     <div ref={formRef} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] overflow-hidden scroll-mt-28">
       <div className="p-6 md:p-8 border-b border-[hsl(var(--table-border))] flex flex-wrap items-center justify-between gap-4">
-        <h3 className="text-3xl text-[hsl(var(--black))] m-0">REGISTRATION</h3>
-        <div role="tablist" aria-label="Registration type" className="inline-flex rounded-lg border border-[hsl(var(--black))] overflow-hidden">
+        <h3 className="text-3xl text-[hsl(var(--black))] m-0">{t('REGISTRATION')}</h3>
+        <div role="tablist" aria-label={t('Registration type')} className="inline-flex rounded-lg border border-[hsl(var(--black))] overflow-hidden">
           {MODES.map((m) => (
             <button
               key={m.id}
@@ -287,7 +291,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                 m.id === mode ? 'bg-[hsl(var(--black))] text-white' : 'bg-transparent text-[hsl(var(--black))]'
               }`}
             >
-              {m.id === 'team' ? 'Team' : 'Free agent'}
+              {m.id === 'team' ? t('Team') : t('Free agent')}
             </button>
           ))}
         </div>
@@ -299,63 +303,63 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
 
         {isTeam ? (
           <>
-            <Fieldset legend="Team">
+            <Fieldset legend={t('Team')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FieldBlock label="Team name" htmlFor="team_name">
+                <FieldBlock label={t('Team name')} htmlFor="team_name">
                   <Input id="team_name" name="team_name" required />
                 </FieldBlock>
-                <FieldBlock label="Team type" htmlFor="team_type">
+                <FieldBlock label={t('Team type')} htmlFor="team_type">
                   <select id="team_type" name="team_type" required className={selectClass} defaultValue="">
-                    <option value="">Select</option>
-                    {TEAM_TYPES.map((t) => (
-                      <option key={t} value={t}>{t}</option>
+                    <option value="">{t('Select')}</option>
+                    {TEAM_TYPES.map((tt) => (
+                      <option key={tt} value={tt}>{t(tt)}</option>
                     ))}
                   </select>
                 </FieldBlock>
               </div>
-              <FieldBlock label="School, club or organization (if any)" htmlFor="organization">
+              <FieldBlock label={t('School, club or organization (if any)')} htmlFor="organization">
                 <Input id="organization" name="organization" />
               </FieldBlock>
               <DivisionFields group={group} setGroup={setGroup} gender={gender} setGender={setGender} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FieldBlock label="League" htmlFor="league" hint="Pick the area closest to you, or leave it for us to place.">
+                <FieldBlock label={t('League')} htmlFor="league" hint={t('Pick the area closest to you, or leave it for us to place.')}>
                   <select id="league" name="league" className={selectClass} defaultValue={initialLeague}>
-                    <option value="">Not sure yet</option>
+                    <option value="">{t('Not sure yet')}</option>
                     {LEAGUES.map((l) => (
                       <option key={l.slug} value={l.slug}>{l.name}</option>
                     ))}
                   </select>
                 </FieldBlock>
-                <FieldBlock label="Players on your roster (estimate)" htmlFor="roster_size">
+                <FieldBlock label={t('Players on your roster (estimate)')} htmlFor="roster_size">
                   <Input id="roster_size" name="roster_size" type="number" min="1" max="40" inputMode="numeric" />
                 </FieldBlock>
               </div>
             </Fieldset>
 
-            <Fieldset legend="Coach / team contact">
+            <Fieldset legend={t('Coach / team contact')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FieldBlock label="Full name" htmlFor="contact_name">
+                <FieldBlock label={t('Full name')} htmlFor="contact_name">
                   <Input id="contact_name" name="contact_name" required autoComplete="name" />
                 </FieldBlock>
-                <FieldBlock label="Phone" htmlFor="contact_phone">
+                <FieldBlock label={t('Phone')} htmlFor="contact_phone">
                   <Input id="contact_phone" name="contact_phone" type="tel" required autoComplete="tel" />
                 </FieldBlock>
               </div>
-              <FieldBlock label="Email" htmlFor="email">
+              <FieldBlock label={t('Email')} htmlFor="email">
                 <Input id="email" name="email" type="email" required autoComplete="email" />
               </FieldBlock>
-              <FieldBlock label="Anything else we should know?" htmlFor="notes">
+              <FieldBlock label={t('Anything else we should know?')} htmlFor="notes">
                 <Textarea id="notes" name="notes" rows={3} />
               </FieldBlock>
             </Fieldset>
 
-            <Fieldset legend="Players">
+            <Fieldset legend={t('Players')}>
               <p className="text-sm text-[hsl(var(--gray))] m-0">
-                Add at least one player now, up to {MAX_ROSTER}. You can add the rest later. Players under 18 are approved from the contact email above.
+                {t('Add at least one player now, up to {max}. You can add the rest later. Players under 18 are approved from the contact email above.', { max: MAX_ROSTER })}
               </p>
               {roster.map((p, i) => (
                 <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_200px_auto] gap-3 items-end">
-                  <FieldBlock label={`Player ${i + 1} full name`} htmlFor={`roster_name_${i}`}>
+                  <FieldBlock label={t('Player {n} full name', { n: i + 1 })} htmlFor={`roster_name_${i}`}>
                     <Input
                       id={`roster_name_${i}`}
                       value={p.name}
@@ -363,7 +367,7 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                       required
                     />
                   </FieldBlock>
-                  <FieldBlock label="Date of birth" htmlFor={`roster_dob_${i}`}>
+                  <FieldBlock label={t('Date of birth')} htmlFor={`roster_dob_${i}`}>
                     <Input
                       id={`roster_dob_${i}`}
                       type="date"
@@ -377,9 +381,9 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                       type="button"
                       onClick={() => setRoster((r) => r.filter((_, idx) => idx !== i))}
                       className="h-10 px-3 text-sm font-bold uppercase tracking-wider text-[hsl(var(--gray))] hover:text-[hsl(var(--black))]"
-                      aria-label={`Remove player ${i + 1}`}
+                      aria-label={t('Remove player {n}', { n: i + 1 })}
                     >
-                      Remove
+                      {t('Remove')}
                     </button>
                   )}
                 </div>
@@ -390,53 +394,53 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                   onClick={() => setRoster((r) => [...r, emptyPlayer()])}
                   className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--primary))]"
                 >
-                  + Add another player
+                  {t('+ Add another player')}
                 </button>
               )}
             </Fieldset>
           </>
         ) : (
           <>
-            <Fieldset legend="Player">
+            <Fieldset legend={t('Player')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FieldBlock label="Player full name" htmlFor="player_name">
+                <FieldBlock label={t('Player full name')} htmlFor="player_name">
                   <Input id="player_name" name="player_name" required />
                 </FieldBlock>
-                <FieldBlock label="Date of birth" htmlFor="dob">
+                <FieldBlock label={t('Date of birth')} htmlFor="dob">
                   <Input id="dob" name="date_of_birth" type="date" required />
                 </FieldBlock>
               </div>
               <DivisionFields group={group} setGroup={setGroup} gender={gender} setGender={setGender} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <FieldBlock
-                  label="Position"
+                  label={t('Position')}
                   htmlFor="position"
-                  hint={group === 'U6' ? 'U6 is 4v4 with no goalkeeper.' : undefined}
+                  hint={group === 'U6' ? t('U6 is 4v4 with no goalkeeper.') : undefined}
                 >
                   <select id="position" name="position" required className={selectClass} defaultValue="">
-                    <option value="">Select</option>
+                    <option value="">{t('Select')}</option>
                     {POSITIONS.filter((p) => !(group === 'U6' && p !== 'Field player')).map((p) => (
-                      <option key={p} value={p}>{p}</option>
+                      <option key={p} value={p}>{t(p)}</option>
                     ))}
                   </select>
                 </FieldBlock>
-                <FieldBlock label="League" htmlFor="league">
+                <FieldBlock label={t('League')} htmlFor="league">
                   <select id="league" name="league" className={selectClass} defaultValue={initialLeague}>
-                    <option value="">Not sure yet</option>
+                    <option value="">{t('Not sure yet')}</option>
                     {LEAGUES.map((l) => (
                       <option key={l.slug} value={l.slug}>{l.name}</option>
                     ))}
                   </select>
                 </FieldBlock>
               </div>
-              <FieldBlock label="Experience or notes" htmlFor="notes">
+              <FieldBlock label={t('Experience or notes')} htmlFor="notes">
                 <Textarea id="notes" name="notes" rows={3} />
               </FieldBlock>
             </Fieldset>
 
-            <Fieldset legend={youth ? 'Parent / guardian' : 'Your contact info'}>
+            <Fieldset legend={youth ? t('Parent / guardian') : t('Your contact info')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FieldBlock label={youth ? 'Parent / guardian name' : 'Phone'} htmlFor={youth ? 'guardian_name' : 'contact_phone'}>
+                <FieldBlock label={youth ? t('Parent / guardian name') : t('Phone')} htmlFor={youth ? 'guardian_name' : 'contact_phone'}>
                   {youth ? (
                     <Input id="guardian_name" name="guardian_name" required autoComplete="name" />
                   ) : (
@@ -444,19 +448,19 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
                   )}
                 </FieldBlock>
                 {youth && (
-                  <FieldBlock label="Parent / guardian phone" htmlFor="contact_phone">
+                  <FieldBlock label={t('Parent / guardian phone')} htmlFor="contact_phone">
                     <Input id="contact_phone" name="contact_phone" type="tel" required autoComplete="tel" />
                   </FieldBlock>
                 )}
               </div>
-              <FieldBlock label="Email" htmlFor="email">
+              <FieldBlock label={t('Email')} htmlFor="email">
                 <Input id="email" name="email" type="email" required autoComplete="email" />
               </FieldBlock>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <FieldBlock label="Emergency contact name" htmlFor="emergency_name">
+                <FieldBlock label={t('Emergency contact name')} htmlFor="emergency_name">
                   <Input id="emergency_name" name="emergency_contact_name" required />
                 </FieldBlock>
-                <FieldBlock label="Emergency contact phone" htmlFor="emergency_phone">
+                <FieldBlock label={t('Emergency contact phone')} htmlFor="emergency_phone">
                   <Input id="emergency_phone" name="emergency_contact_phone" type="tel" required />
                 </FieldBlock>
               </div>
@@ -475,10 +479,10 @@ function RegistrationForm({ mode, setMode, formRef, initialLeague }) {
             disabled={sending}
             className="w-full bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary-dark))] text-white font-bold uppercase tracking-wider"
           >
-            {sending ? 'Sending…' : isTeam ? 'Register team' : 'Sign up as a free agent'}
+            {sending ? t('Sending…') : isTeam ? t('Register team') : t('Sign up as a free agent')}
           </Button>
           <p className="text-sm text-[hsl(var(--gray))] mt-3 mb-0">
-            We will confirm your division, league and venue, and tell you the next steps.
+            {t('We will confirm your division, league and venue, and tell you the next steps.')}
           </p>
         </div>
       </form>
@@ -505,6 +509,7 @@ function FaqItem({ q, a }) {
 }
 
 function RegisterPage() {
+  const { t } = useT();
   const [params] = useSearchParams();
   const initialMode = params.get('type') === 'free-agent' ? 'free-agent' : 'team';
   const [mode, setMode] = useState(initialMode);
@@ -519,18 +524,18 @@ function RegisterPage() {
   return (
     <div className="pt-32 pb-24 bg-[hsl(var(--background))] min-h-screen">
       <Helmet>
-        <title>Register | {NETWORK.name}</title>
+        <title>{`${t('Register')} | ${NETWORK.name}`}</title>
         <meta
           name="description"
-          content="Register a futsal team or sign up as a free agent. School, club, nonprofit and community teams welcome, U6 to adult."
+          content={t('Register a futsal team or sign up as a free agent. School, club, nonprofit and community teams welcome, U6 to adult.')}
         />
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">SEASON REGISTRATION</span>
-        <h1 className="text-[hsl(var(--black))] mb-4">REGISTER</h1>
+        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">{t('SEASON REGISTRATION')}</span>
+        <h1 className="text-[hsl(var(--black))] mb-4">{t('REGISTER')}</h1>
         <p className="text-[hsl(var(--gray))] text-xl max-w-2xl mb-14">
-          Bring your team to the court, or sign up on your own and we will find you a team. Schools, clubs, nonprofits and friends all welcome.
+          {t('Bring your team to the court, or sign up on your own and we will find you a team. Schools, clubs, nonprofits and friends all welcome.')}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
@@ -543,13 +548,13 @@ function RegisterPage() {
                   : 'bg-[hsl(var(--true-white))] border-[hsl(var(--table-border))]'
               }`}
             >
-              <h3 className={`text-4xl m-0 mb-2 ${i === 0 ? 'text-white' : 'text-[hsl(var(--black))]'}`}>{m.label.toUpperCase()}</h3>
-              <p className={`mb-5 ${i === 0 ? 'text-white/70' : 'text-[hsl(var(--gray))]'}`}>{m.desc}</p>
+              <h3 className={`text-4xl m-0 mb-2 ${i === 0 ? 'text-white' : 'text-[hsl(var(--black))]'}`}>{t(m.label).toUpperCase()}</h3>
+              <p className={`mb-5 ${i === 0 ? 'text-white/70' : 'text-[hsl(var(--gray))]'}`}>{t(m.desc)}</p>
               <ul className="list-none p-0 m-0 mb-8 flex-1 space-y-2">
                 {m.points.map((p) => (
                   <li key={p} className="flex items-center gap-3 text-sm">
                     <span className="w-1.5 h-1.5 bg-[hsl(var(--primary))] shrink-0" />
-                    {p}
+                    {t(p)}
                   </li>
                 ))}
               </ul>
@@ -562,7 +567,7 @@ function RegisterPage() {
                     : 'w-full bg-transparent border border-[hsl(var(--black))] text-[hsl(var(--black))] hover:bg-[hsl(var(--black))] hover:text-white font-bold uppercase tracking-wider'
                 }
               >
-                {m.id === 'team' ? 'Register a team' : 'Sign up as a free agent'}
+                {m.id === 'team' ? t('Register a team') : t('Sign up as a free agent')}
               </Button>
             </div>
           ))}
@@ -577,29 +582,29 @@ function RegisterPage() {
         </div>
 
         <div className="mb-20">
-          <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">HOW IT WORKS</span>
-          <h2 className="text-[hsl(var(--black))] mb-8">FOUR STEPS</h2>
+          <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">{t('HOW IT WORKS')}</span>
+          <h2 className="text-[hsl(var(--black))] mb-8">{t('FOUR STEPS')}</h2>
           <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 list-none p-0 m-0">
             {STEPS.map((s) => (
               <li key={s.num} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
                 <div className="font-['Bebas_Neue'] text-4xl text-[hsl(var(--primary))] leading-none mb-2">{s.num}</div>
-                <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-2">{s.title.toUpperCase()}</h3>
-                <p className="text-[hsl(var(--gray))] text-sm m-0">{s.desc}</p>
+                <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-2">{t(s.title).toUpperCase()}</h3>
+                <p className="text-[hsl(var(--gray))] text-sm m-0">{t(s.desc)}</p>
               </li>
             ))}
           </ol>
         </div>
 
         <div>
-          <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">COMMON QUESTIONS</span>
-          <h2 className="text-[hsl(var(--black))] mb-8">FAQ</h2>
+          <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">{t('COMMON QUESTIONS')}</span>
+          <h2 className="text-[hsl(var(--black))] mb-8">{t('FAQ')}</h2>
           <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] overflow-hidden mb-8">
             {FAQS.map((f) => (
-              <FaqItem key={f.q} q={f.q} a={f.a} />
+              <FaqItem key={f.q} q={t(f.q)} a={t(f.a)} />
             ))}
           </div>
           <p className="text-[hsl(var(--gray))]">
-            Still have a question? <Link to="/contact" className="text-[hsl(var(--primary))] font-bold">Contact us</Link>.
+            {t('Still have a question?')} <Link to="/contact" className="text-[hsl(var(--primary))] font-bold">{t('Contact us')}</Link>.
           </p>
         </div>
       </div>

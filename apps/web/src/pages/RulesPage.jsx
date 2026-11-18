@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { NETWORK } from '../data/leagues.js';
 import Photo from '../components/Photo.jsx';
 import { TRACKING } from '../data/divisions.js';
+import { useT } from '../lib/i18n.jsx';
 
 const range = (g) => (g.length === 1 ? g[0] : `${g[0]}–${g[g.length - 1]}`);
 
@@ -73,12 +74,13 @@ const RULES = [
 ];
 
 function Block({ title, items }) {
+  const { t } = useT();
   return (
     <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
-      <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-3">{title.toUpperCase()}</h3>
+      <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-3">{t(title).toUpperCase()}</h3>
       <ul className="m-0 pl-5 space-y-2 text-[hsl(var(--gray))] text-sm">
         {items.map((i) => (
-          <li key={i}>{i}</li>
+          <li key={i}>{t(i)}</li>
         ))}
       </ul>
     </div>
@@ -86,49 +88,49 @@ function Block({ title, items }) {
 }
 
 function RulesPage() {
+  const { t } = useT();
   return (
     <div className="pt-32 pb-24 bg-[hsl(var(--background))] min-h-screen">
       <Helmet>
-        <title>Format and rules | {NETWORK.name}</title>
-        <meta name="description" content="Match format, game rules, rosters and conduct for every age group." />
+        <title>{`${t('Format and rules')} | ${NETWORK.name}`}</title>
+        <meta name="description" content={t('Match format, game rules, rosters and conduct for every age group.')} />
       </Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">FORMAT AND RULES</span>
-        <h1 className="text-[hsl(var(--black))] mb-4">HOW WE PLAY</h1>
+        <span className="label-text text-[hsl(var(--primary))] font-bold tracking-widest mb-2 block">{t('FORMAT AND RULES')}</span>
+        <h1 className="text-[hsl(var(--black))] mb-4">{t('HOW WE PLAY')}</h1>
         <p className="text-[hsl(var(--gray))] text-xl mb-12">
-          Games follow FIFA Futsal Laws with a few league rules on top. Venues are Park District, high school
-          and college gyms, depending on the age group.
+          {t('Games follow FIFA Futsal Laws with a few league rules on top. Venues are Park District, high school and college gyms, depending on the age group.')}
         </p>
 
-        <Photo src="/images/gym-wide.jpg" alt="A full gym with teams in yellow bibs playing a game" className="aspect-[16/9] mb-12" width="1024" height="768" />
+        <Photo src="/images/gym-wide.jpg" alt={t('A full gym with teams in yellow bibs playing a game')} className="aspect-[16/9] mb-12" width="1024" height="768" />
 
-        <h2 className="text-[hsl(var(--black))] mb-6">FORMAT BY AGE GROUP</h2>
+        <h2 className="text-[hsl(var(--black))] mb-6">{t('FORMAT BY AGE GROUP')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-14">
-          {TRACKING.map((t) => (
-            <div key={t.id} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
-              <div className="font-['Bebas_Neue'] text-4xl text-[hsl(var(--primary))] leading-none mb-2">{range(t.groups)}</div>
-              <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-1">{FORMAT[t.id].toUpperCase()}</h3>
-              <p className="text-[hsl(var(--gray))] text-sm m-0">{t.title}. {t.text}</p>
+          {TRACKING.map((tr) => (
+            <div key={tr.id} className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6">
+              <div className="font-['Bebas_Neue'] text-4xl text-[hsl(var(--primary))] leading-none mb-2">{range(tr.groups)}</div>
+              <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-1">{t(FORMAT[tr.id]).toUpperCase()}</h3>
+              <p className="text-[hsl(var(--gray))] text-sm m-0">{t(tr.title)}. {t(tr.text)}</p>
             </div>
           ))}
         </div>
 
-        <h2 className="text-[hsl(var(--black))] mb-6">CLOCK AND BALLS</h2>
+        <h2 className="text-[hsl(var(--black))] mb-6">{t('CLOCK AND BALLS')}</h2>
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[hsl(var(--table-border))] border border-[hsl(var(--table-border))] mb-14">
           {CLOCK.map((c) => (
             <div key={c.label} className="bg-[hsl(var(--true-white))] p-4">
-              <dt className="label-text text-xs font-bold tracking-widest text-[hsl(var(--gray))]">{c.label.toUpperCase()}</dt>
-              <dd className="m-0 mt-1 text-sm text-[hsl(var(--black))]">{c.value}</dd>
+              <dt className="label-text text-xs font-bold tracking-widest text-[hsl(var(--gray))]">{t(c.label).toUpperCase()}</dt>
+              <dd className="m-0 mt-1 text-sm text-[hsl(var(--black))]">{t(c.value)}</dd>
             </div>
           ))}
         </dl>
 
-        <h2 className="text-[hsl(var(--black))] mb-6">GAME RULES</h2>
+        <h2 className="text-[hsl(var(--black))] mb-6">{t('GAME RULES')}</h2>
         <div className="space-y-4 mb-14">
           {GAME_RULES.map((g) => <Block key={g.title} {...g} />)}
         </div>
 
-        <h2 className="text-[hsl(var(--black))] mb-6">STANDINGS AND KNOCKOUTS</h2>
+        <h2 className="text-[hsl(var(--black))] mb-6">{t('STANDINGS AND KNOCKOUTS')}</h2>
         <div className="space-y-4 mb-14">
           <Block title="Tiebreakers" items={[
             'Points, then head-to-head, then goal difference, then goals scored, then goals against, then a 5-shot penalty tiebreaker.',
@@ -137,15 +139,15 @@ function RulesPage() {
           ]} />
         </div>
 
-        <h2 className="text-[hsl(var(--black))] mb-6">ROSTERS, BENCH AND CONDUCT</h2>
+        <h2 className="text-[hsl(var(--black))] mb-6">{t('ROSTERS, BENCH AND CONDUCT')}</h2>
         <div className="space-y-4 mb-14">
           {RULES.map((g) => <Block key={g.title} {...g} />)}
         </div>
 
         <div className="bg-[hsl(var(--true-white))] rounded-2xl border border-[hsl(var(--table-border))] p-6 mb-8">
-          <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-2">QUESTIONS</h3>
+          <h3 className="text-xl text-[hsl(var(--black))] m-0 mb-2">{t('QUESTIONS')}</h3>
           <p className="text-[hsl(var(--gray))] text-sm m-0">
-            ekuro@tekkerz.co · 312-767-7432. Fees are on the <Link to="/pricing" className="text-[hsl(var(--primary))] font-semibold">pricing page</Link>.
+            ekuro@tekkerz.co · 312-767-7432. {t('Fees are on the')} <Link to="/pricing" className="text-[hsl(var(--primary))] font-semibold">{t('pricing page')}</Link>.
           </p>
         </div>
       </div>

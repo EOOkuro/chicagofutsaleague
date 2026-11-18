@@ -1,6 +1,8 @@
 // Sends a registration straight into FedOS (Option 3: our own form, FedOS API behind it).
 // No sign-in needed. The anon key below is FedOS's PUBLIC key and is safe in site code.
 // To point at a different project, set VITE_FEDOS_URL and VITE_FEDOS_ANON_KEY in the site's environment.
+import { tr } from './lang.js';
+
 const env = (typeof import.meta !== 'undefined' && import.meta.env) || {};
 
 const FEDOS_URL = (env.VITE_FEDOS_URL || 'https://fevsslhhaaapplmrnclz.supabase.co').replace(/\/$/, '');
@@ -34,7 +36,7 @@ export async function submitRegistration(leagueSlug, formData) {
       body: JSON.stringify({ p_slug: leagueSlug, form_data: formData }),
     });
   } catch {
-    throw new Error('We could not send your registration. Check your connection and try again.');
+    throw new Error(tr('We could not send your registration. Check your connection and try again.'));
   }
 
   let body = null;
@@ -45,7 +47,7 @@ export async function submitRegistration(leagueSlug, formData) {
   }
 
   if (!res.ok) {
-    throw new Error(body?.message || 'We could not send your registration. Please try again in a moment.');
+    throw new Error(body?.message || tr('We could not send your registration. Please try again in a moment.'));
   }
   return body;
 }
